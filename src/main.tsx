@@ -4,11 +4,14 @@ import { BrowserRouter } from "react-router-dom";
 
 import "./index.css";
 import App from "./App";
+import { VehicleProvider } from "./context/VehicleContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <VehicleProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </VehicleProvider>
   </StrictMode>
 );
