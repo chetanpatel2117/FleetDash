@@ -1,4 +1,5 @@
 import { Truck, Activity, CirclePause, WifiOff } from "lucide-react";
+import { useState } from "react";
 
 import StatCard from "../components/dashboard/StatCard";
 import LiveMapCard from "../components/dashboard/LiveMapCard";
@@ -9,8 +10,23 @@ import { useVehicles } from "../hooks/useVehicles";
 import VehicleTable from "../components/dashboard/VehicleTable";
 import VehicleDetailsPanel from "../components/dashboard/VehicleDetailsPanel";
 
+import SearchBar from "../components/dashboard/SearchBar";
+import StatusFilter from "../components/dashboard/StatusFilter";
+
 function Dashboard () {
   const { vehicles } = useVehicles();
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const filteredVehicles = vehicles.filter(vehicle => {
+    const matchesSearch =
+      vehicle.name.toLowerCase().includes(search.toLowerCase()) ||
+      vehicle.id.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus = statusFilter === "all" || vehicle.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const dashboardStats = [
     {
@@ -43,7 +59,15 @@ function Dashboard () {
 
         <p className='mt-2 text-slate-400'>Monitor your fleet performance in real time.</p>
       </section>
-      {/* Statistics Section */}
+      {/* Search Section */}
+      <section className='mt-8 flex flex-col gap-4 md:flex-row'>
+        <div className='flex-1'>
+          <SearchBar search={search} setSearch={setSearch} />
+        </div>
+
+        <StatusFilter status={statusFilter} setStatus={setStatusFilter} />
+      </section>
+      ; ;{/* Statistics Section */}
       <section className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
         {dashboardStats.map(stat => (
           <StatCard key={stat.title} title={stat.title} value={stat.value} icon={stat.icon} />
@@ -53,7 +77,7 @@ function Dashboard () {
       <section>
         <div className='grid grid-cols-1 gap-6 xl:grid-cols-3'>
           <div className='xl:col-span-2'>
-            <LiveMapCard />
+            <LiveMapCard vehicles = { filteredVehicles }/>
           </div>
 
           <VehicleDetailsPanel />
@@ -65,7 +89,7 @@ function Dashboard () {
       </section>
       {/* Vehicle Table */}
       <section>
-        <VehicleTable />
+        <VehicleTable vehicles={filteredVehicles} />
       </section>
       ;
     </div>

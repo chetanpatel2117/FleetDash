@@ -1,8 +1,10 @@
-import { useVehicles } from "../../hooks/useVehicles";
+import type { Vehicle } from "../../types/vehicle";
 
-function VehicleTable () {
-  const { vehicles } = useVehicles();
+interface VehicleTableProps {
+  vehicles: Vehicle[];
+}
 
+function VehicleTable ({ vehicles }: VehicleTableProps) {
   return (
     <div className='rounded-xl border border-slate-700 bg-slate-800 p-6'>
       <h2 className='mb-6 text-xl font-semibold text-white'>Live Vehicle Status</h2>

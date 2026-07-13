@@ -1,11 +1,16 @@
 import FleetMap from "./FleetMap";
+import type { Vehicle } from "../../types/vehicle";
 
-function LiveMapCard () {
+interface LiveMapCardProps {
+  vehicles: Vehicle[];
+}
+
+function LiveMapCard ({ vehicles }: LiveMapCardProps) {
   return (
     <div>
       <h2 className='mb-5 text-2xl font-semibold text-white'>Live Fleet Map</h2>
 
-      <FleetMap />
+      <FleetMap vehicles={vehicles} />
     </div>
   );
 }

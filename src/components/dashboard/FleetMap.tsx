@@ -2,9 +2,14 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
 import { useVehicles } from "../../hooks/useVehicles";
 import { vehicleIcon } from "../../utils/markerIcons";
+import type { Vehicle } from "../../types/vehicle";
 
-function FleetMap () {
-  const { vehicles, setSelectedVehicle } = useVehicles();
+interface FleetMapProps {
+  vehicles: Vehicle[];
+}
+
+function FleetMap ({ vehicles }: FleetMapProps) {
+  const { setSelectedVehicle } = useVehicles();
 
   return (
     <div className='rounded-xl border border-slate-700 bg-slate-800 overflow-hidden'>
