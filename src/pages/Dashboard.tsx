@@ -7,6 +7,7 @@ import FleetActivity from "../components/dashboard/FleetActivity";
 
 import { useVehicles } from "../hooks/useVehicles";
 import VehicleTable from "../components/dashboard/VehicleTable";
+import VehicleDetailsPanel from "../components/dashboard/VehicleDetailsPanel";
 
 function Dashboard () {
   const { vehicles } = useVehicles();
@@ -55,10 +56,10 @@ function Dashboard () {
             <LiveMapCard />
           </div>
 
-          <AlertsPanel />
+          <VehicleDetailsPanel />
         </div>
       </section>
-      {/* Fleet Activity */}
+      ;{/* Fleet Activity */}
       <section>
         <FleetActivity />
       </section>

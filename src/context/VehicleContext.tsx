@@ -1,12 +1,15 @@
-import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import type { Vehicle } from "../types/vehicle";
-import { useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+
 import { mockVehicles, generateVehicleUpdates } from "../services/mockTelemetry";
 
 interface VehicleContextType {
   vehicles: Vehicle[];
   setVehicles: React.Dispatch<React.SetStateAction<Vehicle[]>>;
+
+  selectedVehicle: Vehicle | null;
+  setSelectedVehicle: React.Dispatch<React.SetStateAction<Vehicle | null>>;
 }
 
 const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
@@ -16,11 +19,13 @@ interface VehicleProviderProps {
 }
 
 function VehicleProvider ({ children }: VehicleProviderProps) {
-  const [vehicles, setVehicles] = useState(mockVehicles);
+  const [vehicles, setVehicles] = useState<Vehicle[]>(mockVehicles);
+
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setVehicles(generateVehicleUpdates());
+      setVehicles(currentVehicles => generateVehicleUpdates(currentVehicles));
     }, 2000);
 
     return () => clearInterval(interval);
@@ -31,6 +36,9 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
       value={{
         vehicles,
         setVehicles,
+
+        selectedVehicle,
+        setSelectedVehicle,
       }}
     >
       {children}

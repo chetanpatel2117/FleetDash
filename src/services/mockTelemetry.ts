@@ -33,8 +33,8 @@ export const mockVehicles: Vehicle[] = [
   },
 ];
 
-export function generateVehicleUpdates() {
-  return mockVehicles.map((vehicle) => ({
+export function generateVehicleUpdates(vehicles: Vehicle[]): Vehicle[] {
+  return vehicles.map((vehicle) => ({
     ...vehicle,
 
     latitude: vehicle.latitude + (Math.random() - 0.5) * 0.002,
