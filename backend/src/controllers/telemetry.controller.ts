@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
 import { processTelemetry } from "../services/telemetry.service";
 
-export const receiveTelemetry = (req: Request, res: Response) => {
+export const receiveTelemetry = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const result = processTelemetry(req.body);
+    const result = await processTelemetry(req.body);
 
     return res.status(result.statusCode).json(result);
   } catch (error) {
