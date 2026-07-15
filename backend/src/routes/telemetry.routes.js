@@ -1,14 +1,10 @@
-import { Router } from "express";
-import {
-  getTelemetryHistory,
-  receiveTelemetry,
-} from "../controllers/telemetry.controller";
-
-const router = Router();
-
-router.post("/api/telemetry", receiveTelemetry);
-router.get("/api/telemetry/history/:vehicleId", getTelemetryHistory);
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const telemetry_controller_1 = require("../controllers/telemetry.controller");
+const router = (0, express_1.Router)();
+router.post("/api/telemetry", telemetry_controller_1.receiveTelemetry);
+router.get("/api/telemetry/history/:vehicleId", telemetry_controller_1.getTelemetryHistory);
 /**
  * @swagger
  * /api/telemetry:
@@ -46,6 +42,6 @@ router.get("/api/telemetry/history/:vehicleId", getTelemetryHistory);
  *       400:
  *         description: Invalid telemetry data
  */
-router.post("/api/telemetry", receiveTelemetry);
-
-export default router;
+router.post("/api/telemetry", telemetry_controller_1.receiveTelemetry);
+exports.default = router;
+//# sourceMappingURL=telemetry.routes.js.map

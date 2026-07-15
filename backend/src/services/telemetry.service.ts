@@ -1,8 +1,9 @@
-import { TelemetryData } from "../interfaces/telemetry.interface";
+import type { TelemetryData } from "../interfaces/telemetry.interface";
 
-import { ApiResponse } from "../interfaces/apiResponse.interface";
+import type { ApiResponse } from "../interfaces/apiResponse.interface";
+import { saveTelemetry } from "./telemetryStorage.service";
 
-export const processTelemetry = (data: TelemetryData): ApiResponse => {
+export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
 
   if (
@@ -45,8 +46,17 @@ export const processTelemetry = (data: TelemetryData): ApiResponse => {
   // TODO (Developer 2):
   // Send telemetry to Worker Thread
 
-  // TODO (Developer 3):
-  // Save telemetry to MongoDB Bucket Pattern
+  try {
+    await saveTelemetry(data);
+  } catch (error) {
+    console.error("Telemetry storage failed", error);
+
+    return {
+      success: false,
+      statusCode: 500,
+      message: "Telemetry received but storage failed",
+    };
+  }
 
   return {
     success: true,
