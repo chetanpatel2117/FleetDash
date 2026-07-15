@@ -1,3 +1,4 @@
+
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -26,4 +27,3 @@ const connectDatabase = async () => {
 exports.connectDatabase = connectDatabase;
 const getConnectionStatus = () => mongoose_1.default.connection.readyState;
 exports.getConnectionStatus = getConnectionStatus;
-//# sourceMappingURL=database.js.map
