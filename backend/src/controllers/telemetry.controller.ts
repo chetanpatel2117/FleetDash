@@ -10,6 +10,8 @@ export const receiveTelemetry = async (
 
     return res.status(result.statusCode).json(result);
   } catch (error) {
+    console.error("Telemetry Controller Error:", error);
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
