@@ -1,9 +1,10 @@
 import { TelemetryData } from "../interfaces/telemetry.interface";
 import { ApiResponse } from "../interfaces/apiResponse.interface";
 import { runTelemetryWorker } from "../workers";
+import { publishVehicleUpdate, publishVehicleAlert } from "./redisPublisher";
 
 export const processTelemetry = async (
-  data: TelemetryData
+  data: TelemetryData,
 ): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
 
@@ -50,7 +51,7 @@ export const processTelemetry = async (
     longitude,
     speed,
   });
-  
+
   if (!workerResult.success) {
     return {
       success: false,
@@ -64,6 +65,13 @@ export const processTelemetry = async (
 
   // TODO (Developer 3):
   // Save telemetry to MongoDB Bucket Pattern
+
+  await publishVehicleUpdate(workerResult.data);
+
+  // Publish alert if overspeed
+  if (workerResult.data && workerResult.data.speed > 80) {
+    await publishVehicleAlert(workerResult.data);
+  }
 
   return {
     success: true,
