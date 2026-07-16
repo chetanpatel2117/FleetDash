@@ -6,14 +6,24 @@ export function runTelemetryWorker(
   data: WorkerTelemetryData
 ): Promise<WorkerResponse> {
   return new Promise((resolve, reject) => {
-    const worker = new Worker(
-      path.resolve(__dirname, "telemetry.worker.js")
-    );
+    const isDev =
+  process.env.NODE_ENV !== "production" &&
+  __filename.endsWith(".ts");
+
+
+
+const workerPath = isDev
+  ? path.resolve(__dirname, "telemetry.worker.ts")
+  : path.resolve(__dirname, "telemetry.worker.js");
+
+
+    const worker = new Worker(workerPath, {
+      execArgv: isDev ? ["-r", "ts-node/register"] : [],
+    });
 
     worker.postMessage(data);
 
     worker.on("message", (result: WorkerResponse) => {
-         console.log("Worker Manager received:", result);
       resolve(result);
       worker.terminate();
     });
@@ -25,7 +35,7 @@ export function runTelemetryWorker(
 
     worker.on("exit", (code) => {
       if (code !== 0) {
-        reject(new Error(`Worker stopped with exit code ${code}`));
+        reject(new Error(`Worker exited with code ${code}`));
       }
     });
   });

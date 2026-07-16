@@ -50,10 +50,7 @@ export const processTelemetry = async (
     longitude,
     speed,
   });
-  console.log("========== SERVICE ==========");
-console.log(workerResult);
-console.log("=============================");
-
+  
   if (!workerResult.success) {
     return {
       success: false,
