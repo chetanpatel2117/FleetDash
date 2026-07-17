@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
+import http from "http";
 import app from "./app";
 import { connectDatabase } from "./database/database";
+import { initSocketServer } from "./socket";
 
 dotenv.config();
 
@@ -10,7 +12,10 @@ const startServer = async () => {
   try {
     await connectDatabase();
 
-    app.listen(PORT, () => {
+    const server = http.createServer(app);
+    initSocketServer(server);
+
+    server.listen(PORT, () => {
       console.log(`🚀 FleetDash Backend running on port ${PORT}`);
     });
   } catch (error) {

@@ -58,6 +58,21 @@ export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse
     };
   }
 
+  try {
+    const { io } = await import("../socket");
+    io?.emit("telemetry", {
+      vehicleId,
+      latitude,
+      longitude,
+      speed,
+      heading: data.heading,
+      status: data.status,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (socketError) {
+    console.warn("Failed to emit telemetry over Socket.io", socketError);
+  }
+
   return {
     success: true,
     statusCode: 200,
