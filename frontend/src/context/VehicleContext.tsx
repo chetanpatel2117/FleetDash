@@ -3,6 +3,7 @@ import type { Vehicle } from "../types/vehicle";
 import { createContext, useContext, useState, useEffect } from "react";
 
 import { mockVehicles, generateVehicleUpdates } from "../services/mockTelemetry";
+import { useVehicleStream } from "../hooks/useVehicleStream";
 
 interface VehicleContextType {
   vehicles: Vehicle[];
@@ -27,7 +28,17 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [connected, setConnected] = useState(false);
 
+  // Toggle between mock telemetry and live Socket.io
+  const USE_MOCK_TELEMETRY = true;
+
+  useVehicleStream({
+    onVehicleUpdate: setVehicles,
+    onConnectionChange: setConnected,
+  });
+
   useEffect(() => {
+    if (!USE_MOCK_TELEMETRY) return;
+
     const interval = setInterval(() => {
       setVehicles(currentVehicles => generateVehicleUpdates(currentVehicles));
     }, 2000);
