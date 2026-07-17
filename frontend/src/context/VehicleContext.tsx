@@ -10,6 +10,9 @@ interface VehicleContextType {
 
   selectedVehicle: Vehicle | null;
   setSelectedVehicle: React.Dispatch<React.SetStateAction<Vehicle | null>>;
+
+  connected: boolean;
+  setConnected: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
@@ -22,6 +25,7 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
   const [vehicles, setVehicles] = useState<Vehicle[]>(mockVehicles);
 
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -39,6 +43,9 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
 
         selectedVehicle,
         setSelectedVehicle,
+
+        connected,
+        setConnected,
       }}
     >
       {children}
