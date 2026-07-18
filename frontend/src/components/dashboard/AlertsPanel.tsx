@@ -1,25 +1,9 @@
 import { TriangleAlert } from "lucide-react";
 
-const alerts = [
-  {
-    id: 1,
-    vehicle: "Truck-102",
-    message: "Entered restricted zone",
-    severity: "High",
-  },
-  {
-    id: 2,
-    vehicle: "Truck-208",
-    message: "Overspeed detected",
-    severity: "Medium",
-  },
-  {
-    id: 3,
-    vehicle: "Truck-054",
-    message: "Engine idle too long",
-    severity: "Low",
-  },
-];
+import { mockAlerts } from "../../constants/alerts";
+
+const alerts = mockAlerts;
+
 
 function AlertsPanel () {
   return (
@@ -35,6 +19,8 @@ function AlertsPanel () {
               <h3 className='font-medium text-white'>{alert.vehicle}</h3>
 
               <p className='text-sm text-slate-400'>{alert.message}</p>
+              <p className='text-xs text-slate-500 mt-1'>{alert.timestamp}</p>;
+
             </div>
 
             <span

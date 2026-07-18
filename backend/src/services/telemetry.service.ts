@@ -1,7 +1,8 @@
 import type { TelemetryData } from "../interfaces/telemetry.interface";
-
 import type { ApiResponse } from "../interfaces/apiResponse.interface";
 import { saveTelemetry } from "./telemetryStorage.service";
+import { publishVehicleUpdate, publishVehicleAlert } from "./redisPublisher";
+import { runTelemetryWorker } from "../workers";
 
 export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
@@ -71,6 +72,21 @@ export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse
       statusCode: 500,
       message: "Telemetry received but storage failed",
     };
+  }
+
+  try {
+    const { io } = await import("../socket");
+    io?.emit("telemetry", {
+      vehicleId,
+      latitude,
+      longitude,
+      speed,
+      heading: data.heading,
+      status: data.status,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (socketError) {
+    console.warn("Failed to emit telemetry over Socket.io", socketError);
   }
 
   await publishVehicleUpdate(workerResult.data);

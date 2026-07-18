@@ -1,20 +1,26 @@
-import { Truck, Activity, CirclePause, WifiOff } from "lucide-react";
 import { useState } from "react";
 
 import StatCard from "../components/dashboard/StatCard";
 import LiveMapCard from "../components/dashboard/LiveMapCard";
-import AlertsPanel from "../components/dashboard/AlertsPanel";
 import FleetActivity from "../components/dashboard/FleetActivity";
 
 import { useVehicles } from "../hooks/useVehicles";
+
 import VehicleTable from "../components/dashboard/VehicleTable";
 import VehicleDetailsPanel from "../components/dashboard/VehicleDetailsPanel";
 
 import SearchBar from "../components/dashboard/SearchBar";
 import StatusFilter from "../components/dashboard/StatusFilter";
 
-function Dashboard () {
+import { getDashboardStats } from "../constants/dashboardStats";
+
+
+function Dashboard() {
   const { vehicles } = useVehicles();
+
+  const dashboardStats = getDashboardStats(vehicles);
+
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -28,28 +34,7 @@ function Dashboard () {
     return matchesSearch && matchesStatus;
   });
 
-  const dashboardStats = [
-    {
-      title: "Active Vehicles",
-      value: vehicles.length.toString(),
-      icon: Truck,
-    },
-    {
-      title: "Moving Vehicles",
-      value: vehicles.filter(vehicle => vehicle.status === "moving").length.toString(),
-      icon: Activity,
-    },
-    {
-      title: "Idle Vehicles",
-      value: vehicles.filter(vehicle => vehicle.status === "idle").length.toString(),
-      icon: CirclePause,
-    },
-    {
-      title: "Offline Vehicles",
-      value: vehicles.filter(vehicle => vehicle.status === "offline").length.toString(),
-      icon: WifiOff,
-    },
-  ];
+
 
   return (
     <div className='space-y-10 p-6'>
@@ -67,7 +52,7 @@ function Dashboard () {
 
         <StatusFilter status={statusFilter} setStatus={setStatusFilter} />
       </section>
-      ; ;{/* Statistics Section */}
+      {/* Statistics Section */}
       <section className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
         {dashboardStats.map(stat => (
           <StatCard key={stat.title} title={stat.title} value={stat.value} icon={stat.icon} />
@@ -83,7 +68,7 @@ function Dashboard () {
           <VehicleDetailsPanel />
         </div>
       </section>
-      ;{/* Fleet Activity */}
+      {/* Fleet Activity */}
       <section>
         <FleetActivity />
       </section>
@@ -91,7 +76,7 @@ function Dashboard () {
       <section>
         <VehicleTable vehicles={filteredVehicles} />
       </section>
-      ;
+      
     </div>
   );
 }
