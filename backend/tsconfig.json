@@ -4,8 +4,18 @@
     "module": "CommonJS",
     "moduleResolution": "node",
 
-    "rootDir": "./src",
-    "outDir": "./dist",
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2020",
+    "types": [],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    // For nodejs:
+    // "lib": ["esnext"],
+    // "types": ["node"],
+    // and npm install -D @types/node
 
     "strict": true,
     "esModuleInterop": true,
