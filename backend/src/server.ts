@@ -1,8 +1,6 @@
 import dotenv from "dotenv";
-import http from "http";
 import app from "./app";
 import { connectDatabase } from "./database/database";
-import { initSocketServer } from "./socket";
 
 dotenv.config();
 
