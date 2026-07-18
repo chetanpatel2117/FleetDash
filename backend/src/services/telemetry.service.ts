@@ -1,7 +1,8 @@
 import type { TelemetryData } from "../interfaces/telemetry.interface";
-
 import type { ApiResponse } from "../interfaces/apiResponse.interface";
 import { saveTelemetry } from "./telemetryStorage.service";
+import { publishVehicleUpdate, publishVehicleAlert } from "./redisPublisher";
+import { runTelemetryWorker } from "../workers";
 
 export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
@@ -43,8 +44,23 @@ export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse
     };
   }
 
-  // TODO (Developer 2):
-  // Send telemetry to Worker Thread
+  const workerResult = await runTelemetryWorker({
+    vehicleId,
+    latitude,
+    longitude,
+    speed,
+  });
+
+  if (!workerResult.success) {
+    return {
+      success: false,
+      statusCode: 400,
+      message:
+        workerResult.error ||
+        workerResult.validation?.errors.join(", ") ||
+        "Worker processing failed",
+    };
+  }
 
   try {
     await saveTelemetry(data);
@@ -73,15 +89,17 @@ export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse
     console.warn("Failed to emit telemetry over Socket.io", socketError);
   }
 
+  await publishVehicleUpdate(workerResult.data);
+
+  // Publish alert if overspeed
+  if (workerResult.data && workerResult.data.speed > 80) {
+    await publishVehicleAlert(workerResult.data);
+  }
+
   return {
     success: true,
     statusCode: 200,
     message: "Telemetry received successfully",
-    data: {
-      vehicleId,
-      latitude,
-      longitude,
-      speed,
-    },
+    data: workerResult.data,
   };
 };
