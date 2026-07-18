@@ -1,9 +1,13 @@
 import { Router } from "express";
-import { receiveTelemetry } from "../controllers/telemetry.controller";
+import {
+  getTelemetryHistory,
+  receiveTelemetry,
+} from "../controllers/telemetry.controller";
 
 const router = Router();
 
 router.post("/api/telemetry", receiveTelemetry);
+router.get("/api/telemetry/history/:vehicleId", getTelemetryHistory);
 
 /**
  * @swagger

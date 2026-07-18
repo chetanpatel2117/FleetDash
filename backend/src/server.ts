@@ -8,13 +8,17 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-// Create HTTP server
-const httpServer = createServer(app);
+const startServer = async () => {
+  try {
+    await connectDatabase();
 
-// Attach Socket.io
-initializeSocket(httpServer);
+    app.listen(PORT, () => {
+      console.log(`🚀 FleetDash Backend running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server", error);
+    process.exit(1);
+  }
+};
 
-// Start server
-httpServer.listen(PORT, () => {
-  console.log(`🚀 FleetDash Backend running on port ${PORT}`);
-});
+startServer();
