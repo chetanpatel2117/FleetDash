@@ -1,9 +1,14 @@
 import type { TelemetryData } from "../interfaces/telemetry.interface";
-
 import type { ApiResponse } from "../interfaces/apiResponse.interface";
-import { saveTelemetry } from "./telemetryStorage.service";
 
-export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse> => {
+import { runTelemetryWorker } from "../workers/workerManager";
+import { saveTelemetry } from "./telemetryStorage.service";
+import { checkVehicleBoundary } from "./geofence.service";
+import { publishVehicleAlert, publishVehicleUpdate } from "./redisPublisher";
+
+export const processTelemetry = async (
+  data: TelemetryData,
+): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
 
   if (
@@ -73,9 +78,10 @@ export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse
     };
   }
 
+  const geofenceResult = checkVehicleBoundary(latitude, longitude);
+
   await publishVehicleUpdate(workerResult.data);
 
-  // Publish alert if overspeed
   if (workerResult.data && workerResult.data.speed > 80) {
     await publishVehicleAlert(workerResult.data);
   }
@@ -84,6 +90,9 @@ export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse
     success: true,
     statusCode: 200,
     message: "Telemetry received successfully",
-    data: workerResult.data,
+    data: {
+      ...workerResult.data,
+      geofence: geofenceResult,
+    },
   };
 };

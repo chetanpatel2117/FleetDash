@@ -1,7 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.processTelemetry = void 0;
+const workerManager_1 = require("../workers/workerManager");
 const telemetryStorage_service_1 = require("./telemetryStorage.service");
+const geofence_service_1 = require("./geofence.service");
+const redisPublisher_1 = require("./redisPublisher");
 const processTelemetry = async (data) => {
     const { vehicleId, latitude, longitude, speed } = data;
     if (!vehicleId ||
@@ -35,8 +38,21 @@ const processTelemetry = async (data) => {
             message: "Speed cannot be negative",
         };
     }
-    // TODO (Developer 2):
-    // Send telemetry to Worker Thread
+    const workerResult = await (0, workerManager_1.runTelemetryWorker)({
+        vehicleId,
+        latitude,
+        longitude,
+        speed,
+    });
+    if (!workerResult.success) {
+        return {
+            success: false,
+            statusCode: 400,
+            message: workerResult.error ||
+                workerResult.validation?.errors.join(", ") ||
+                "Worker processing failed",
+        };
+    }
     try {
         await (0, telemetryStorage_service_1.saveTelemetry)(data);
     }
@@ -48,15 +64,18 @@ const processTelemetry = async (data) => {
             message: "Telemetry received but storage failed",
         };
     }
+    const geofenceResult = (0, geofence_service_1.checkVehicleBoundary)(latitude, longitude);
+    await (0, redisPublisher_1.publishVehicleUpdate)(workerResult.data);
+    if (workerResult.data && workerResult.data.speed > 80) {
+        await (0, redisPublisher_1.publishVehicleAlert)(workerResult.data);
+    }
     return {
         success: true,
         statusCode: 200,
         message: "Telemetry received successfully",
         data: {
-            vehicleId,
-            latitude,
-            longitude,
-            speed,
+            ...workerResult.data,
+            geofence: geofenceResult,
         },
     };
 };

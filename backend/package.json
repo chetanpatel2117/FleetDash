@@ -7,19 +7,21 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "redis:subscribe": "ts-node src/scripts/redisSubscriberTest.ts"
+    "redis:subscribe": "ts-node src/scripts/redisSubscriberTest.ts",
+    "geofence:test": "ts-node src/scripts/geofenceTest.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@turf/turf": "^7.3.5",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "redis": "^6.1.0",
     "mongodb": "^7.5.0",
     "mongoose": "^9.7.4",
+    "redis": "^6.1.0",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"
   },
