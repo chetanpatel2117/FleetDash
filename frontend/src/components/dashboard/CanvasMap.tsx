@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef } from "react";
 import type { Vehicle } from "../../types/vehicle";
 import { useVehicles } from "../../hooks/useVehicles";
+import socket from "../../services/socket";
 
 interface CanvasMapProps {
   vehicles: Vehicle[];
@@ -15,6 +16,22 @@ function CanvasMap({ vehicles }: CanvasMapProps) {
   useEffect(() => {
     vehiclesRef.current = vehicles;
   }, [vehicles]);
+
+  useEffect(() => {
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    const handleTelemetry = (nextVehicles: Vehicle[]) => {
+      vehiclesRef.current = nextVehicles;
+    };
+
+    socket.on("telemetry:update", handleTelemetry);
+
+    return () => {
+      socket.off("telemetry:update", handleTelemetry);
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
