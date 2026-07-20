@@ -1,27 +1,14 @@
-import { MapContainer, TileLayer } from "react-leaflet";
-
 import type { Vehicle } from "../../types/vehicle";
-import VehicleMarkers from "./VehicleMarkers";
+import CanvasMap from "./CanvasMap";
 
 interface FleetMapProps {
   vehicles: Vehicle[];
 }
 
-function FleetMap ({ vehicles }: FleetMapProps) {
+function FleetMap({ vehicles }: FleetMapProps) {
   return (
-    <div className='rounded-xl border border-slate-700 bg-slate-800 overflow-hidden'>
-      <MapContainer
-        center={[11.0168, 76.9558]}
-        zoom={13}
-        scrollWheelZoom={true}
-        className='h-[500px] w-full'
-      >
-        <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
-          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        />
-        <VehicleMarkers vehicles={vehicles} />;
-      </MapContainer>
+    <div className='overflow-hidden rounded-xl border border-slate-700 bg-slate-800'>
+      <CanvasMap vehicles={vehicles} />
     </div>
   );
 }
