@@ -3,4 +3,6 @@ export interface TelemetryData {
   latitude: number;
   longitude: number;
   speed: number;
+  heading: number;
+  status: string;
 }
