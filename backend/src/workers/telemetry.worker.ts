@@ -7,7 +7,7 @@ import {
 } from "./workerTypes";
 
 parentPort?.on("message", (data: WorkerTelemetryData) => {
-  console.log("✅ Worker Received:", data);
+
 
   const startTime = Date.now();
 
@@ -27,7 +27,7 @@ parentPort?.on("message", (data: WorkerTelemetryData) => {
 
     const processedData = processTelemetryData(data);
 
-    console.log("✅ Processed Data:", processedData);
+
 
     const response: WorkerResponse = {
       success: true,
