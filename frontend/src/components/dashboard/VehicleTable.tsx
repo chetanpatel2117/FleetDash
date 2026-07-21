@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import type { Vehicle } from "../../types/vehicle";
 
 interface VehicleTableProps {
@@ -5,8 +7,16 @@ interface VehicleTableProps {
 }
 
 function VehicleTable ({ vehicles }: VehicleTableProps) {
+  if (!vehicles.length) {
+    return (
+      <div className='rounded-3xl border border-slate-800 bg-slate-900/70 p-10 text-center text-slate-400'>
+        No vehicle telemetry is available yet.
+      </div>
+    );
+  }
+
   return (
-    <div className='rounded-xl border border-slate-700 bg-slate-800 p-6'>
+    <div className='rounded-3xl border border-slate-800 bg-slate-900/70 p-6'>
       <h2 className='mb-6 text-xl font-semibold text-white'>Live Vehicle Status</h2>
 
       <div className='overflow-x-auto'>
@@ -26,9 +36,9 @@ function VehicleTable ({ vehicles }: VehicleTableProps) {
             {vehicles.map(vehicle => (
               <tr
                 key={vehicle.id}
-                className='border-b border-slate-700 hover:bg-slate-700/30 transition-colors'
+                className='border-b border-slate-700 transition-colors hover:bg-slate-700/30'
               >
-                <td className='py-4 text-white font-medium'>{vehicle.name}</td>
+                <td className='py-4 font-medium text-white'>{vehicle.name}</td>
 
                 <td className='py-4'>
                   <span
@@ -62,4 +72,4 @@ function VehicleTable ({ vehicles }: VehicleTableProps) {
   );
 }
 
-export default VehicleTable;
+export default memo(VehicleTable);

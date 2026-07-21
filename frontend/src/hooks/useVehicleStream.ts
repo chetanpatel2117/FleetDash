@@ -18,22 +18,18 @@ export function useVehicleStream({
     }
 
     const handleConnect = () => {
-      console.log("✅ Socket Connected");
       onConnectionChange?.(true);
     };
 
     const handleDisconnect = () => {
-      console.log("❌ Socket Disconnected");
       onConnectionChange?.(false);
     };
 
-    const handleTelemetry = (vehicles: Vehicle[]) => {
+    const handleTelemetry = (incomingVehicles: Vehicle[]) => {
+      onVehicleUpdate(incomingVehicles);
+      updateVehicles(incomingVehicles);
+    };
 
-    updateVehicles(vehicles);
-
-};
-
-    // Placeholder event name
     socket.on("telemetry:update", handleTelemetry);
 
     socket.on("connect", handleConnect);
