@@ -8,7 +8,10 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "redis:subscribe": "ts-node src/scripts/redisSubscriberTest.ts",
-    "geofence:test": "ts-node src/scripts/geofenceTest.ts"
+    "geofence:test": "ts-node src/scripts/geofenceTest.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -27,10 +30,13 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/node": "^26.1.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "jest": "^30.4.2",
     "socket.io-client": "^4.8.3",
+    "ts-jest": "^29.4.11",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
