@@ -1,5 +1,3 @@
-import { MapContainer, TileLayer } from "react-leaflet";
-
 import type { Vehicle } from "../../types/vehicle";
 import VehicleMarkers from "./VehicleMarkers";
 import CanvasLayer from ".//CanvasLayer";
@@ -8,7 +6,7 @@ interface FleetMapProps {
   vehicles: Vehicle[];
 }
 
-function FleetMap ({ vehicles }: FleetMapProps) {
+function FleetMap({ vehicles }: FleetMapProps) {
   return (
     <div className='relative rounded-xl border border-slate-700 bg-slate-800 overflow-hidden'>
       <MapContainer

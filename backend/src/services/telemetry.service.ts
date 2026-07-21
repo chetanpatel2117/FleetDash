@@ -1,13 +1,26 @@
-import { TelemetryData } from "../interfaces/telemetry.interface";
-import { ApiResponse } from "../interfaces/apiResponse.interface";
+import type { TelemetryData } from "../interfaces/telemetry.interface";
+import type { ApiResponse } from "../interfaces/apiResponse.interface";
+import { publishGeofenceAlert } from "./geofencePublisher.service";
+import { saveTelemetry } from "./telemetryStorage.service";
+import {
+  publishVehicleUpdate,
+  publishVehicleAlert,
+} from "./redisPublisher";
+
 import { runTelemetryWorker } from "../workers";
-import { publishVehicleUpdate, publishVehicleAlert } from "./redisPublisher";
+import { AlertService } from "./alert.service";
+import { GeofenceService } from "./geofence.service";
+
+// Create only one instance
+const alertService = new AlertService();
+const geofenceService = new GeofenceService();
 
 export const processTelemetry = async (
-  data: TelemetryData,
+  data: TelemetryData
 ): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
 
+  // Validation
   if (
     !vehicleId ||
     latitude === undefined ||
@@ -45,6 +58,7 @@ export const processTelemetry = async (
     };
   }
 
+  // Process telemetry in worker
   const workerResult = await runTelemetryWorker({
     vehicleId,
     latitude,
@@ -52,7 +66,7 @@ export const processTelemetry = async (
     speed,
   });
 
-  if (!workerResult.success) {
+  if (!workerResult.success || !workerResult.data) {
     return {
       success: false,
       statusCode: 400,
@@ -63,13 +77,59 @@ export const processTelemetry = async (
     };
   }
 
-  // TODO (Developer 3):
-  // Save telemetry to MongoDB Bucket Pattern
+  // Save telemetry
+  try {
+    await saveTelemetry(data);
+  } catch (error) {
+    console.error("Telemetry storage failed", error);
 
+    return {
+      success: false,
+      statusCode: 500,
+      message: "Telemetry received but storage failed",
+    };
+  }
+
+  // Emit telemetry through Socket.IO
+  try {
+    const { io } = await import("../socket");
+
+    io?.emit("telemetry", {
+      vehicleId,
+      latitude,
+      longitude,
+      speed,
+      heading: data.heading,
+      status: data.status,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (socketError) {
+    console.warn("Failed to emit telemetry over Socket.io", socketError);
+  }
+
+  // Publish telemetry update
   await publishVehicleUpdate(workerResult.data);
 
-  // Publish alert if overspeed
-  if (workerResult.data && workerResult.data.speed > 80) {
+  // -----------------------------
+  // Geofence Detection
+  // -----------------------------
+  const isInside = geofenceService.isInside(latitude, longitude);
+const alert = alertService.checkGeofenceState(
+  vehicleId,
+  isInside,
+  latitude,
+  longitude
+);
+
+if (alert) {
+  console.log("Geofence Alert:", alert);
+
+  await publishGeofenceAlert(alert);
+}
+  
+
+  // Overspeed alert
+  if (workerResult.data.speed > 80) {
     await publishVehicleAlert(workerResult.data);
   }
 

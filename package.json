@@ -1,0 +1,9 @@
+{
+  "name": "fleetdash-root",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix frontend run dev -- --host 0.0.0.0",
+    "start:frontend": "npm --prefix frontend run dev -- --host 0.0.0.0",
+    "start:backend": "npm --prefix backend run dev"
+  }
+}
