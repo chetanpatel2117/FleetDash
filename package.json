@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@turf/turf": "^7.3.5",
+    "redis": "^6.1.0"
+  }
+}
