@@ -3,7 +3,10 @@ import type { Vehicle } from "../types/vehicle";
 import { createContext, useContext, useState, useEffect } from "react";
 
 import { mockVehicles, generateVehicleUpdates } from "../services/mockTelemetry";
+
 import { useVehicleStream } from "../hooks/useVehicleStream";
+
+import { clearVehicles, updateVehicles } from "../store/vehicleStore";
 
 interface VehicleContextType {
   vehicles: Vehicle[];
@@ -26,6 +29,7 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
   const [vehicles, setVehicles] = useState<Vehicle[]>(mockVehicles);
 
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+
   const [connected, setConnected] = useState(false);
 
   // Toggle between mock telemetry and live Socket.io
@@ -45,6 +49,15 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
 
     return () => clearInterval(interval);
   }, []);
+
+  /**
+   * Sync React vehicle state to the shared vehicle store.
+   * The Canvas renderer reads from vehicleStore instead of React state.
+   */
+  useEffect(() => {
+    clearVehicles();
+    updateVehicles(vehicles);
+  }, [vehicles]);
 
   return (
     <VehicleContext.Provider

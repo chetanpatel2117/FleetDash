@@ -2,220 +2,176 @@ import * as L from "leaflet";
 import { getVehicles } from "../store/vehicleStore";
 import type { Vehicle } from "../types/vehicle";
 
-
 export class VehicleCanvasLayer extends L.Layer {
+  private canvas!: HTMLCanvasElement;
 
+  private ctx!: CanvasRenderingContext2D;
 
-    private canvas!: HTMLCanvasElement;
+  private map!: L.Map;
 
-    private ctx!: CanvasRenderingContext2D;
+  private animationFrameId!: number;
 
-    private map!: L.Map;
+  private selectedVehicleId: string | null = null;
 
-    private animationFrameId!: number;
+  private readonly CLICK_RADIUS = 12;
 
+  private onVehicleSelect?: (vehicle: Vehicle) => void;
 
+constructor(
+  onVehicleSelect?: (vehicle: Vehicle) => void
+) {
+  super();
 
-    onAdd(map: L.Map): this {
+  this.onVehicleSelect = onVehicleSelect;
+}
 
+  onAdd(map: L.Map): this {
+    this.map = map;
 
-        this.map = map;
+    this.canvas = L.DomUtil.create("canvas", "vehicle-canvas");
 
+    const size = map.getSize();
 
-        this.canvas =
-            L.DomUtil.create(
-                "canvas",
-                "vehicle-canvas"
-            );
+    this.canvas.width = size.x;
+    this.canvas.height = size.y;
 
+    this.ctx = this.canvas.getContext("2d")!;
 
-        const size =
-            map.getSize();
+    map.getPanes().overlayPane.appendChild(this.canvas);
 
+    map.on("resize", this.resize, this);
 
-        this.canvas.width = size.x;
+    map.on("click", this.handleClick, this);
 
-        this.canvas.height = size.y;
+    this.startAnimation();
 
+    return this;
+  }
 
+  private resize = () => {
+    const size = this.map.getSize();
 
-        this.ctx =
-            this.canvas.getContext("2d")!;
+    this.canvas.width = size.x;
+    this.canvas.height = size.y;
+  };
 
+  private startAnimation() {
+    const animate = () => {
+      this.draw();
 
-
-        map.getPanes()
-            .overlayPane
-            .appendChild(this.canvas);
-
-
-
-        map.on(
-            "resize",
-            this.resize,
-            this
-        );
-
-
-
-        this.startAnimation();
-
-
-
-        return this;
-
-    }
-
-
-
-
-    private resize = () => {
-
-
-        const size =
-            this.map.getSize();
-
-
-        this.canvas.width = size.x;
-
-        this.canvas.height = size.y;
-
-
+      this.animationFrameId = requestAnimationFrame(animate);
     };
 
+    animate();
+  }
 
+  private handleClick = (e: L.LeafletMouseEvent) => {
+    const clickPoint = this.map.latLngToContainerPoint(e.latlng);
 
+    const vehicles = getVehicles();
 
+    let nearestVehicle: Vehicle | null = null;
+    let nearestDistance = Infinity;
 
-    private startAnimation() {
+    for (const vehicle of vehicles) {
+      const point = this.map.latLngToContainerPoint([
+        vehicle.latitude,
+        vehicle.longitude,
+      ]);
 
+      const dx = point.x - clickPoint.x;
+      const dy = point.y - clickPoint.y;
 
-        const animate = () => {
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-
-            this.draw();
-
-
-
-            this.animationFrameId =
-                requestAnimationFrame(
-                    animate
-                );
-
-
-        };
-
-
-
-        animate();
-
+      if (
+        distance < nearestDistance &&
+        distance <= this.CLICK_RADIUS
+      ) {
+        nearestDistance = distance;
+        nearestVehicle = vehicle;
+      }
     }
 
+    if (nearestVehicle) {
+      this.selectedVehicleId = nearestVehicle.id;
 
+      this.onVehicleSelect?.(nearestVehicle);
+    }
+  };
 
+  private drawVehicle(vehicle: Vehicle) {
+    const point = this.map.latLngToContainerPoint([
+      vehicle.latitude,
+      vehicle.longitude,
+    ]);
 
+    const isSelected = vehicle.id === this.selectedVehicleId;
 
+    this.ctx.beginPath();
 
+    this.ctx.arc(
+      point.x,
+      point.y,
+      isSelected ? 8 : 6,
+      0,
+      Math.PI * 2
+    );
 
-    draw = () => {
+    this.ctx.fillStyle =
+      vehicle.status === "moving"
+        ? "#16a34a"
+        : vehicle.status === "idle"
+        ? "#eab308"
+        : "#ef4444";
 
+    this.ctx.fill();
 
-        if (!this.ctx)
-            return;
+    if (isSelected) {
+      this.ctx.beginPath();
 
+      this.ctx.arc(
+        point.x,
+        point.y,
+        11,
+        0,
+        Math.PI * 2
+      );
 
+      this.ctx.strokeStyle = "#2563eb";
+      this.ctx.lineWidth = 3;
+      this.ctx.stroke();
+    }
+  }
 
-        this.ctx.clearRect(
-            0,
-            0,
-            this.canvas.width,
-            this.canvas.height
-        );
+  draw = () => {
+    if (!this.ctx) return;
 
+    this.ctx.clearRect(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
 
+    const vehicles = getVehicles();
 
-        const vehicles: Vehicle[] =
-            getVehicles();
+    for (const vehicle of vehicles) {
+      this.drawVehicle(vehicle);
+    }
+  };
 
+  onRemove(map: L.Map): this {
+    cancelAnimationFrame(this.animationFrameId);
 
-
-        vehicles.forEach(
-            (vehicle: Vehicle) => {
-
-
-                const point =
-                    this.map.latLngToContainerPoint(
-                        [
-                            vehicle.latitude,
-                            vehicle.longitude
-                        ]
-                    );
-
-
-
-                this.ctx.beginPath();
-
-
-
-                this.ctx.arc(
-                    point.x,
-                    point.y,
-                    6,
-                    0,
-                    Math.PI * 2
-                );
-
-
-
-                this.ctx.fillStyle =
-                    vehicle.status === "moving"
-                    ? "green"
-                    : "red";
-
-
-
-                this.ctx.fill();
-
-
-            }
-        );
-
-
-    };
-
-
-
-
-
-
-
-    onRemove(map: L.Map): this {
-
-
-        cancelAnimationFrame(
-            this.animationFrameId
-        );
-
-
-
-        if(this.canvas){
-
-            this.canvas.remove();
-
-        }
-
-
-
-        map.off(
-            "resize",
-            this.resize,
-            this
-        );
-
-
-
-        return this;
-
+    if (this.canvas) {
+      this.canvas.remove();
     }
 
+    map.off("resize", this.resize, this);
+
+    map.off("click", this.handleClick, this);
+
+    return this;
+  }
 }
