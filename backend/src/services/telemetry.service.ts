@@ -1,23 +1,8 @@
 import type { TelemetryData } from "../interfaces/telemetry.interface";
 import type { ApiResponse } from "../interfaces/apiResponse.interface";
-import { publishGeofenceAlert } from "./geofencePublisher.service";
 import { saveTelemetry } from "./telemetryStorage.service";
-import {
-  publishVehicleUpdate,
-  publishVehicleAlert,
-} from "./redisPublisher";
 
-import { runTelemetryWorker } from "../workers";
-import { AlertService } from "./alert.service";
-import { GeofenceService } from "./geofence.service";
-
-// Create only one instance
-const alertService = new AlertService();
-const geofenceService = new GeofenceService();
-
-export const processTelemetry = async (
-  data: TelemetryData
-): Promise<ApiResponse> => {
+export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
 
   // Validation
@@ -90,6 +75,8 @@ export const processTelemetry = async (
     };
   }
 
+  const geofenceResult = checkVehicleBoundary(latitude, longitude);
+
   // Emit telemetry through Socket.IO
   try {
     const { io } = await import("../socket");
@@ -110,26 +97,8 @@ export const processTelemetry = async (
   // Publish telemetry update
   await publishVehicleUpdate(workerResult.data);
 
-  // -----------------------------
-  // Geofence Detection
-  // -----------------------------
-  const isInside = geofenceService.isInside(latitude, longitude);
-const alert = alertService.checkGeofenceState(
-  vehicleId,
-  isInside,
-  latitude,
-  longitude
-);
-
-if (alert) {
-  console.log("Geofence Alert:", alert);
-
-  await publishGeofenceAlert(alert);
-}
-  
-
-  // Overspeed alert
-  if (workerResult.data.speed > 80) {
+  // Publish alert if overspeed
+  if (workerResult.data && workerResult.data.speed > 80) {
     await publishVehicleAlert(workerResult.data);
   }
 
@@ -137,6 +106,9 @@ if (alert) {
     success: true,
     statusCode: 200,
     message: "Telemetry received successfully",
-    data: workerResult.data,
+    data: {
+      ...workerResult.data,
+      geofence: geofenceResult,
+    },
   };
 };

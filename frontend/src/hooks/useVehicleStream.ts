@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import socket from "../services/socket";
 import type { Vehicle } from "../types/vehicle";
+import { updateVehicles } from "../store/vehicleStore";
 
 interface UseVehicleStreamProps {
   onVehicleUpdate: (vehicles: Vehicle[]) => void;
@@ -17,20 +18,18 @@ export function useVehicleStream({
     }
 
     const handleConnect = () => {
-      console.log("✅ Socket Connected");
       onConnectionChange?.(true);
     };
 
     const handleDisconnect = () => {
-      console.log("❌ Socket Disconnected");
       onConnectionChange?.(false);
     };
 
-    const handleTelemetry = (vehicles: Vehicle[]) => {
-      onVehicleUpdate(vehicles);
+    const handleTelemetry = (incomingVehicles: Vehicle[]) => {
+      onVehicleUpdate(incomingVehicles);
+      updateVehicles(incomingVehicles);
     };
 
-    // Placeholder event name
     socket.on("telemetry:update", handleTelemetry);
 
     socket.on("connect", handleConnect);
