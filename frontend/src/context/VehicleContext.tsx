@@ -34,7 +34,6 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
 
 
   const [vehicles, setVehicles] = useState<Vehicle[]>(mockVehicles);
-
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
 
   const [connected, setConnected] = useState(false);
@@ -87,6 +86,8 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
       {children}
     </VehicleContext.Provider>
   );
+
+  return <VehicleContext.Provider value={value}>{children}</VehicleContext.Provider>;
 }
 
 export function useVehicleContext () {

@@ -1,20 +1,22 @@
 import { createClient } from "redis";
 import { GeofenceAlert } from "../interfaces/alert.interface";
 
-const publisher = createClient();
+export const publisher = createClient();
 
 publisher.on("error", (err) => {
   console.error("Redis Publisher Error:", err);
 });
 
-(async () => {
+export const connectPublisher = async (): Promise<void> => {
   if (!publisher.isOpen) {
     await publisher.connect();
+    console.log("✅ Redis Publisher Connected");
   }
-})();
+};
 
 export const publishGeofenceAlert = async (
   alert: GeofenceAlert
 ): Promise<void> => {
   await publisher.publish(alert.event, JSON.stringify(alert));
 };
+

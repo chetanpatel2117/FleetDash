@@ -30,7 +30,6 @@ function Dashboard () {
   useEffect(() => {
     if (ENABLE_LOAD_TEST) {
       const testVehicles = generateTestVehicles(LOAD_TEST_COUNT);
-
       updateVehicles(testVehicles);
     }
   }, []);
@@ -51,9 +50,17 @@ function Dashboard () {
     });
   }, [vehicles, search, statusFilter]);
 
-  const totalVehicles = vehicles.length;
+      return matchesSearch && matchesStatus;
+    });
+  }, [deferredSearch, statusFilter, vehicles]);
 
+  const totalVehicles = vehicles.length;
   const visibleVehicles = filteredVehicles.length;
+  const isLoading = !connected && totalVehicles === 0;
+  const hasNoMatches = !isLoading && filteredVehicles.length === 0;
+  const connectionBadgeClass = connected
+    ? "bg-emerald-500/15 text-emerald-400"
+    : "bg-amber-500/15 text-amber-400";
 
   return (
     <div className='space-y-5 p-6'>

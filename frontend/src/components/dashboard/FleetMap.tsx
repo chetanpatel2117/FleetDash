@@ -1,3 +1,4 @@
+import { MapContainer, TileLayer } from "react-leaflet";
 import type { Vehicle } from "../../types/vehicle";
 
 import { MapContainer, TileLayer, useMap } from "react-leaflet";

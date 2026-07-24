@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import http from "http";
 import { startGeofenceSubscriber } from "./services/geofenceSubscriber.service";
+import { connectPublisher } from "./services/geofencePublisher.service";
 import app from "./app";
 import { connectDatabase } from "./database/database";
 import { initializeSocket } from "./socket/socket";
@@ -13,9 +14,12 @@ const startServer = async () => {
   try {
     await connectDatabase();
 
+    await connectPublisher();
+
     const server = http.createServer(app);
 
     initializeSocket(server);
+
     await startGeofenceSubscriber();
 
     server.listen(PORT, () => {
