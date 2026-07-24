@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import StatCard from "../components/dashboard/StatCard";
 import LiveMapCard from "../components/dashboard/LiveMapCard";
@@ -8,27 +8,26 @@ import VehicleDetailsPanel from "../components/dashboard/VehicleDetailsPanel";
 import SearchBar from "../components/dashboard/SearchBar";
 import StatusFilter from "../components/dashboard/StatusFilter";
 import PerformancePanel from "../components/dashboard/PerformancePanel";
-
-import { useVehicles } from "../hooks/useVehicles";
-import { getDashboardStats } from "../constants/dashboardStats";
 import RenderLoopDemo from "../components/dashboard/RenderLoopDemo";
+
+import { useVehicleContext } from "../context/VehicleContext";
+import { getDashboardStats } from "../constants/dashboardStats";
 import { useFPS } from "../hooks/useFPS";
 
 import { generateTestVehicles } from "../services/loadTestTelemetry";
+
 import { ENABLE_LOAD_TEST, LOAD_TEST_COUNT } from "../constants/performance";
 
 import { updateVehicles } from "../store/vehicleStore";
 
 function Dashboard () {
-  const { vehicles, connected } = useVehicles();
+  const { vehicles, connected } = useVehicleContext();
 
   const [search, setSearch] = useState("");
 
   const [statusFilter, setStatusFilter] = useState("all");
 
   const { fps, frameTime } = useFPS();
-
-  // Load test vehicles
 
   useEffect(() => {
     if (ENABLE_LOAD_TEST) {
@@ -38,88 +37,73 @@ function Dashboard () {
     }
   }, []);
 
-  const dashboardStats = getDashboardStats(vehicles);
+  const dashboardStats = useMemo(() => {
+    return getDashboardStats(vehicles);
+  }, [vehicles]);
 
-  const filteredVehicles = vehicles.filter(vehicle => {
-    const matchesSearch =
-      vehicle.name.toLowerCase().includes(search.toLowerCase()) ||
-      vehicle.id.toLowerCase().includes(search.toLowerCase());
+  const filteredVehicles = useMemo(() => {
+    return vehicles.filter(vehicle => {
+      const matchesSearch =
+        vehicle.name.toLowerCase().includes(search.toLowerCase()) ||
+        vehicle.id.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || vehicle.status === statusFilter;
+      const matchesStatus = statusFilter === "all" || vehicle.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
-  });
+      return matchesSearch && matchesStatus;
+    });
+  }, [vehicles, search, statusFilter]);
 
   const totalVehicles = vehicles.length;
 
   const visibleVehicles = filteredVehicles.length;
 
   return (
-    <div className='space-y-10 p-6'>
-      {/* Welcome Section */}
-
-      <section>
-        <h1 className='text-3xl font-bold text-white'>Welcome Back 👋</h1>
-
-        <p className='mt-2 text-slate-400'>Monitor your fleet performance in real time.</p>
-      </section>
-
-      {/* Search Section */}
-
-      <section className='mt-8 flex flex-col gap-4 md:flex-row'>
-        <div className='flex-1'>
-          <SearchBar search={search} setSearch={setSearch} />
-        </div>
-
-        <StatusFilter status={statusFilter} setStatus={setStatusFilter} />
-      </section>
-
-      {/* Statistics Section */}
-
+    <div className='space-y-5 p-6'>
+      {/* Statistics */}
       <section className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
         {dashboardStats.map(stat => (
           <StatCard key={stat.title} title={stat.title} value={stat.value} icon={stat.icon} />
         ))}
       </section>
 
-      {/* Map + Panels */}
+      {/* ================= Row 1 ================= */}
 
-      <section>
-        <div className='grid grid-cols-1 gap-6 xl:grid-cols-3'>
-          {/* Map */}
-
-          <div className='xl:col-span-2'>
-            <LiveMapCard vehicles={filteredVehicles} />
-          </div>
-
-          {/* Right Side */}
-
-          <div className='space-y-4'>
-            <VehicleDetailsPanel />
-
-            <PerformancePanel
-              totalVehicles={totalVehicles}
-              visibleVehicles={visibleVehicles}
-              connected={connected}
-              fps={fps}
-              frameTime={frameTime}
-            />
-
-            <RenderLoopDemo />
-          </div>
+      <section className='grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch h-[600px]'>
+        {/* Map */}
+        <div className='xl:col-span-2 h-full'>
+          <LiveMapCard vehicles={filteredVehicles} />
         </div>
+        {/* Vehicle Details */}
+        <div className='xl:col-span-1 h-full min-h-0'>
+          <VehicleDetailsPanel />
+        </div>
+        ;
       </section>
 
-      {/* Fleet Activity */}
+      {/* ================= Row 2 ================= */}
 
-      <section>
-        <FleetActivity />
+      <section className='grid grid-cols-1 xl:grid-cols-3 gap-3 items-start'>
+        <div className='xl:col-span-2'>
+          <FleetActivity />
+        </div>
+
+        <PerformancePanel
+          totalVehicles={totalVehicles}
+          visibleVehicles={visibleVehicles}
+          connected={connected}
+          fps={fps}
+          frameTime={frameTime}
+        />
       </section>
 
-      {/* Vehicle Table */}
+      {/* ================= Row 3 ================= */}
 
-      <section>
-        <VehicleTable vehicles={filteredVehicles} />
+      <section className='grid grid-cols-1 xl:grid-cols-3 gap-6 items-start'>
+        <div className='xl:col-span-2'>
+          <VehicleTable vehicles={filteredVehicles} />
+        </div>
+
+        <RenderLoopDemo />
       </section>
     </div>
   );

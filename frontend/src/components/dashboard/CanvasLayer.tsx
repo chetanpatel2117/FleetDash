@@ -2,22 +2,34 @@ import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 
 import { VehicleCanvasLayer } from "../../map/VehicleCanvasLayer";
-import { useVehicleContext } from "../../context/VehicleContext";
+import type { Vehicle } from "../../types/vehicle";
 
-export default function CanvasLayer () {
+interface CanvasLayerProps {
+  vehicles: Vehicle[];
+}
+
+export default function CanvasLayer ({ vehicles }: CanvasLayerProps) {
   const map = useMap();
 
-  const { setSelectedVehicle } = useVehicleContext();
-
   useEffect(() => {
-    const layer = new VehicleCanvasLayer(setSelectedVehicle);
+    const layer = new VehicleCanvasLayer();
+
+    layer.setVehicles(vehicles);
 
     map.addLayer(layer);
 
     return () => {
       map.removeLayer(layer);
     };
-  }, [map, setSelectedVehicle]);
+  }, [map]);
+
+  useEffect(() => {
+    map.eachLayer(layer => {
+      if (layer instanceof VehicleCanvasLayer) {
+        layer.setVehicles(vehicles);
+      }
+    });
+  }, [vehicles, map]);
 
   return null;
 }

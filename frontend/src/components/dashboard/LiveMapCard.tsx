@@ -7,10 +7,12 @@ interface LiveMapCardProps {
 
 function LiveMapCard ({ vehicles }: LiveMapCardProps) {
   return (
-    <div>
-      <h2 className='mb-5 text-2xl font-semibold text-white'>Live Fleet Map</h2>
+    <div className='rounded-xl border border-slate-700 bg-slate-900 p-5'>
+      <h2 className='mb-4 text-xl font-semibold text-white'>Live Fleet Map</h2>
 
-      <FleetMap vehicles={vehicles} />
+      <div className='h-[500px] overflow-hidden rounded-lg'>
+        <FleetMap vehicles={vehicles} />
+      </div>
     </div>
   );
 }
