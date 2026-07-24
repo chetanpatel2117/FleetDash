@@ -2,7 +2,6 @@ import type { Vehicle } from "../types/vehicle";
 import { addHistory } from "./vehicleHistoryStore";
 
 
-
 const vehicleMap =
   new Map<string, Vehicle>();
 

@@ -98,38 +98,48 @@ function VehicleDetailsPanel () {
           >
             ID: {selectedVehicle.id}
           </p>
-          <button
-            onClick={toggleFollow}
-            className={`
-              mt-3
-              rounded-lg
-              px-3
-              py-2
-              text-sm
-              font-medium
-              transition
+          
+          <div className='mt-3 flex gap-3'>
+  <button
+    onClick={toggleFollow}
+    className={`
+      flex-1
+      rounded-lg
+      px-3
+      py-2
+      text-sm
+      font-medium
+      transition
 
-              ${follow ? "bg-red-500 text-white" : "bg-cyan-500 text-black"}
+      ${
+        follow
+          ? "bg-red-500 text-white hover:bg-red-600"
+          : "bg-cyan-500 text-black hover:bg-cyan-600"
+      }
+    `}
+  >
+    {follow ? "Stop Following" : "Follow Vehicle"}
+  </button>
 
-            `}
-          >
-            {follow ? "Stop Following" : "Follow Vehicle"}
-          </button>
-          <button
-            onClick={toggleRoute}
-            className='
-                  mt-2
-                  rounded-lg
-                  bg-purple-500
-                  px-3
-                  py-2
-                  text-sm
-                  font-medium
-                  text-white
-                  '
-          >
-            {showRoute ? "Hide Route" : "View Route"}
-          </button>
+  <button
+    onClick={toggleRoute}
+    className='
+      flex-1
+      rounded-lg
+      bg-purple-500
+      px-3
+      py-2
+      text-sm
+      font-medium
+      text-white
+      transition
+      hover:bg-purple-600
+    '
+  >
+    {showRoute ? "Hide Route" : "View Route"}
+  </button>
+</div>
+
           
         </div>
 

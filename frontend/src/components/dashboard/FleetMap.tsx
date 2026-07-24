@@ -13,8 +13,8 @@ import { useFollowVehicle } from "../../hooks/useFollowVehicle";
 import MapControls from "../../map/MapControls";
 
 import RouteReplayLayer from "../../map/RouteReplayLayer";
-
-
+import RouteReplayControls from "../../map/RouteReplayControls";
+import ReplayVehicleMarker from "../../map/ReplayVehicleMarker";
 
 interface FleetMapProps {
   vehicles: Vehicle[];
@@ -33,7 +33,7 @@ function FollowSelectedVehicle () {
     map.flyTo([selectedVehicle.latitude, selectedVehicle.longitude], map.getZoom(), {
       duration: 1,
     });
-  }, [follow, selectedVehicle?.latitude, selectedVehicle?.longitude, map]);
+  }, [follow, selectedVehicle, map]);
 
   return null;
 }
@@ -71,8 +71,9 @@ function FleetMap ({ vehicles }: FleetMapProps) {
         <MapControls />
 
         <FollowSelectedVehicle />
-        <RouteReplayLayer />;
-
+        <RouteReplayLayer />
+        <RouteReplayControls />
+        <ReplayVehicleMarker />
       </MapContainer>
     </div>
   );

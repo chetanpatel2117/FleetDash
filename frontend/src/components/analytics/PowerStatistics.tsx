@@ -1,4 +1,4 @@
-import { Fuel, Battery, Signal } from "lucide-react";
+import { Fuel } from "lucide-react";
 
 interface PowerStatisticsProps {
   data: {

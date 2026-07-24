@@ -23,7 +23,7 @@ interface VehicleContextType {
   setConnected: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
+export const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
 
 interface VehicleProviderProps {
   children: ReactNode;
@@ -32,8 +32,6 @@ interface VehicleProviderProps {
 function VehicleProvider ({ children }: VehicleProviderProps) {
   // Initial data before socket connection
 
-  const ENABLE_SOCKET = true;
-const initialVehicles = ENABLE_SOCKET ? [] : mockVehicles;
 
   const [vehicles, setVehicles] = useState<Vehicle[]>(mockVehicles);
 

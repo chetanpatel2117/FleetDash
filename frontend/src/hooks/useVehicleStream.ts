@@ -14,59 +14,34 @@ export function useVehicleStream({
 }: UseVehicleStreamProps) {
 
   useEffect(() => {
+  if (!socket.connected) {
+    socket.connect();
+  }
 
-    if (!socket.connected) {
-      socket.connect();
-    }
+  const handleConnect = () => {
+    console.log("Socket Connected");
+    onConnectionChange?.(true);
+  };
 
+  const handleDisconnect = () => {
+    console.log("Socket Disconnected");
+    onConnectionChange?.(false);
+  };
 
-    const handleConnect = () => {
-      console.log("Socket Connected");
-      onConnectionChange?.(true);
-    };
+  const handleTelemetry = (vehicles: Vehicle[]) => {
+    updateVehicles(vehicles);
+    onVehicleUpdate(vehicles);
+  };
 
+  socket.on("connect", handleConnect);
+  socket.on("disconnect", handleDisconnect);
+  socket.on("telemetry:update", handleTelemetry);
 
-    const handleDisconnect = () => {
-      console.log("Socket Disconnected");
-      onConnectionChange?.(false);
-    };
-
-
-    const handleTelemetry = (vehicles: Vehicle[]) => {
-
-      updateVehicles(vehicles);
-
-      onVehicleUpdate(vehicles);
-
-    };
-
-
-    socket.on("connect", handleConnect);
-
-    socket.on("disconnect", handleDisconnect);
-
-    socket.on(
-      "telemetry:update",
-      handleTelemetry
-    );
-
-
-    return () => {
-
-      socket.off("connect", handleConnect);
-
-      socket.off(
-        "disconnect",
-        handleDisconnect
-      );
-
-      socket.off(
-        "telemetry:update",
-        handleTelemetry
-      );
-
-    };
-
-  }, []);
+  return () => {
+    socket.off("connect", handleConnect);
+    socket.off("disconnect", handleDisconnect);
+    socket.off("telemetry:update", handleTelemetry);
+  };
+}, [onVehicleUpdate, onConnectionChange]);
 
 }

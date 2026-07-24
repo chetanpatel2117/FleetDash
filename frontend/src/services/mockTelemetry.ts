@@ -77,7 +77,7 @@ export function generateVehicleUpdates(
     const radians = (heading * Math.PI) / 180;
 
     // Movement distance (tune this value if needed)
-    const distance = speed * 0.00001;
+    const distance = speed * 0.00005;
 
     const latitude =
       vehicle.latitude + Math.cos(radians) * distance;

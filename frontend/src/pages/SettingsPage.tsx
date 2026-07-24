@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Map, Route, RefreshCw, LocateFixed } from "lucide-react";
+import { Route, RefreshCw, LocateFixed } from "lucide-react";
 
 function SettingsPage () {
   const [autoFollow, setAutoFollow] = useState(true);

@@ -2,8 +2,6 @@ import { useMemo, useState } from "react";
 import type { Vehicle } from "../../types/vehicle";
 import VehicleTableRow from "./VehicleTableRow";
 
-
-
 interface VehicleDataTableProps {
   vehicles: Vehicle[];
 }
@@ -28,32 +26,27 @@ function VehicleDataTable ({ vehicles }: VehicleDataTableProps) {
     const sorted = [...vehicles];
 
     sorted.sort((a, b) => {
-      let comparison = 0;
+      const comparison = (() => {
+        switch (sortColumn) {
+          case "name":
+            return a.name.localeCompare(b.name);
 
-      switch (sortColumn) {
-        case "name":
-          comparison = a.name.localeCompare(b.name);
-          break;
+          case "id":
+            return a.id.localeCompare(b.id);
 
-        case "id":
-          comparison = a.id.localeCompare(b.id);
-          break;
+          case "status":
+            return a.status.localeCompare(b.status);
 
-        case "status":
-          comparison = a.status.localeCompare(b.status);
-          break;
+          case "speed":
+            return a.speed - b.speed;
 
-        case "speed":
-          comparison = a.speed - b.speed;
-          break;
+          case "lastUpdated":
+            return new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime();
 
-        case "lastUpdated":
-          comparison = new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime();
-          break;
-
-        default:
-          comparison = 0;
-      }
+          default:
+            return 0;
+        }
+      })();
 
       return sortDirection === "asc" ? comparison : -comparison;
     });

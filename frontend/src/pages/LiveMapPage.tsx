@@ -5,7 +5,8 @@ import VehicleDetailsPanel from "../components/dashboard/VehicleDetailsPanel";
 import { useSelectedVehicle } from "../hooks/useSelectedVehicle";
 import { useState } from "react";
 import MapFilters from "../map/MapFilters";
-import { FolderLock } from "lucide-react";
+
+
 
 function LiveMapPage () {
   const { vehicles } = useVehicleContext();

@@ -5,8 +5,6 @@ import LiveMapCard from "../components/dashboard/LiveMapCard";
 import FleetActivity from "../components/dashboard/FleetActivity";
 import VehicleTable from "../components/dashboard/VehicleTable";
 import VehicleDetailsPanel from "../components/dashboard/VehicleDetailsPanel";
-import SearchBar from "../components/dashboard/SearchBar";
-import StatusFilter from "../components/dashboard/StatusFilter";
 import PerformancePanel from "../components/dashboard/PerformancePanel";
 import RenderLoopDemo from "../components/dashboard/RenderLoopDemo";
 
@@ -23,9 +21,9 @@ import { updateVehicles } from "../store/vehicleStore";
 function Dashboard () {
   const { vehicles, connected } = useVehicleContext();
 
-  const [search, setSearch] = useState("");
+  const [search] = useState("");
 
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter] = useState("all");
 
   const { fps, frameTime } = useFPS();
 
@@ -77,7 +75,7 @@ function Dashboard () {
         <div className='xl:col-span-1 h-full min-h-0'>
           <VehicleDetailsPanel />
         </div>
-        ;
+        
       </section>
 
       {/* ================= Row 2 ================= */}
