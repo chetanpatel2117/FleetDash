@@ -1,41 +1,87 @@
 import type { Vehicle } from "../types/vehicle";
-import { updateVehiclePosition } from "../map/vehicleInterpolation";
+import { addHistory } from "./vehicleHistoryStore";
 
 
-let vehicleMap: Record<string, Vehicle> = {};
+const vehicleMap =
+  new Map<string, Vehicle>();
 
 
 
-export function setVehicle(vehicle: Vehicle) {
+let selectedVehicleId:
+  string | null = null;
 
 
-    vehicleMap[vehicle.id] = vehicle;
+
+const subscribers =
+  new Set<() => void>();
 
 
-    updateVehiclePosition(vehicle);
+
+function notify() {
+
+  subscribers.forEach(
+    callback => callback()
+  );
 
 }
 
 
 
+/*
+    VEHICLE METHODS
+*/
 
 
 export function updateVehicles(
-    updatedVehicles: Vehicle[]
+  vehicles: Vehicle[]
 ) {
 
 
-    updatedVehicles.forEach(vehicle => {
+  vehicles.forEach(vehicle => {
 
 
-        vehicleMap[vehicle.id] = vehicle;
+    vehicleMap.set(
+      vehicle.id,
+      vehicle
+    );
 
 
-        updateVehiclePosition(vehicle);
+
+    addHistory(
+      vehicle.id,
+      {
+        lat: vehicle.latitude,
+        lng: vehicle.longitude,
+      }
+    );
 
 
-    });
+  });
 
+
+
+  notify();
+
+}
+
+
+
+
+
+
+export function setVehicle(
+  vehicle: Vehicle
+) {
+
+
+  vehicleMap.set(
+    vehicle.id,
+    vehicle
+  );
+
+
+
+  notify();
 
 }
 
@@ -44,27 +90,29 @@ export function updateVehicles(
 
 
 
-export function getVehicle(id: string) {
+export function getVehicles() {
 
 
-    return vehicleMap[id];
-
-
-}
-
-
-
-
-
-
-export function getVehicles(): Vehicle[] {
-
-
-    return Object.values(vehicleMap);
-
+  return Array.from(
+    vehicleMap.values()
+  );
 
 }
 
+
+
+
+
+
+export function getVehicle(
+  id: string
+) {
+
+
+  return vehicleMap.get(id);
+
+
+}
 
 
 
@@ -74,7 +122,147 @@ export function getVehicles(): Vehicle[] {
 export function clearVehicles() {
 
 
-    vehicleMap = {};
+  vehicleMap.clear();
+
+
+  selectedVehicleId = null;
+
+
+  notify();
+
+}
+
+
+
+
+
+/*
+    SELECTION METHODS
+*/
+
+
+
+export function selectVehicle(
+  id: string
+) {
+
+
+  const vehicle =
+    vehicleMap.get(id);
+
+
+
+  if(!vehicle){
+
+    return;
+
+  }
+
+
+
+  selectedVehicleId =
+    id;
+
+
+
+  notify();
+
+
+}
+
+
+
+
+
+
+
+export function clearSelectedVehicle() {
+
+
+  selectedVehicleId =
+    null;
+
+
+
+  notify();
+
+
+}
+
+
+
+
+
+
+
+export function getSelectedVehicleId() {
+
+
+  return selectedVehicleId;
+
+
+}
+
+
+
+
+
+
+
+export function getSelectedVehicle() {
+
+
+  if(!selectedVehicleId){
+
+    return null;
+
+  }
+
+
+
+  return (
+    vehicleMap.get(
+      selectedVehicleId
+    )
+    ??
+    null
+  );
+
+
+}
+
+
+
+
+
+
+
+/*
+    SUBSCRIPTION
+*/
+
+
+
+export function subscribe(
+  callback: () => void
+) {
+
+
+  subscribers.add(
+    callback
+  );
+
+
+
+  return () => {
+
+
+    subscribers.delete(
+      callback
+    );
+
+
+  };
 
 
 }

@@ -1,36 +1,45 @@
 import type { Vehicle } from "../types/vehicle";
+import { generateVehicleMetadata } from "./vehicleMetadata";
+
 
 export const mockVehicles: Vehicle[] = [
-  {
-    id: "TRK-101",
-    name: "Truck 101",
-    latitude: 11.0168,
-    longitude: 76.9558,
-    speed: 62,
-    heading: 90,
-    status: "moving",
-    lastUpdated: new Date().toISOString(),
+ {
+  id: "TRK-101",
+  name: "Truck 101",
+  latitude: 11.0168,
+  longitude: 76.9558,
+  speed: 62,
+  heading: 90,
+  status: "moving",
+  lastUpdated: new Date().toISOString(),
+
+  ...generateVehicleMetadata(),
   },
+
   {
-    id: "TRK-102",
-    name: "Truck 102",
-    latitude: 11.025,
-    longitude: 76.96,
-    speed: 48,
-    heading: 180,
-    status: "moving",
-    lastUpdated: new Date().toISOString(),
-  },
+  id: "TRK-102",
+  name: "Truck 102",
+  latitude: 11.025,
+  longitude: 76.96,
+  speed: 48,
+  heading: 180,
+  status: "moving",
+  lastUpdated: new Date().toISOString(),
+
+  ...generateVehicleMetadata(),
+},
   {
-    id: "TRK-103",
-    name: "Truck 103",
-    latitude: 11.01,
-    longitude: 76.948,
-    speed: 0,
-    heading: 270,
-    status: "idle",
-    lastUpdated: new Date().toISOString(),
-  },
+  id: "TRK-103",
+  name: "Truck 103",
+  latitude: 11.01,
+  longitude: 76.948,
+  speed: 0,
+  heading: 270,
+  status: "idle",
+  lastUpdated: new Date().toISOString(),
+
+  ...generateVehicleMetadata(),
+},
 ];
 
 export function generateVehicleUpdates(
@@ -68,7 +77,7 @@ export function generateVehicleUpdates(
     const radians = (heading * Math.PI) / 180;
 
     // Movement distance (tune this value if needed)
-    const distance = speed * 0.00001;
+    const distance = speed * 0.00005;
 
     const latitude =
       vehicle.latitude + Math.cos(radians) * distance;

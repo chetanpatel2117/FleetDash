@@ -1,3 +1,4 @@
+import { Cpu } from "lucide-react";
 import { useState } from "react";
 import { useAnimationFrame } from "../../hooks/useAnimationFrame";
 
@@ -9,12 +10,18 @@ function RenderLoopDemo () {
   });
 
   return (
-    <div className='rounded-xl bg-slate-800 p-6 border border-slate-700'>
-      <h2 className='text-xl font-semibold text-white'>Render Loop Demo</h2>
+    <div className='rounded-xl border border-slate-700 bg-slate-800 p-5'>
+      <div className='flex items-center gap-2 mb-4'>
+        <Cpu className='h-5 w-5 text-cyan-400' />
 
-      <p className='mt-4 text-cyan-400 text-3xl'>{frames}</p>
+        <h2 className='text-xl font-semibold text-white'>Render Loop</h2>
+      </div>
 
-      <p className='text-slate-400 mt-2'>Frames rendered</p>
+      <div className='rounded-lg bg-slate-900 py-6 text-center'>
+        <p className='text-4xl font-bold text-cyan-400'>{frames}</p>
+
+        <p className='mt-2 text-sm text-slate-400'>Frames Rendered</p>
+      </div>
     </div>
   );
 }

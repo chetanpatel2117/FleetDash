@@ -1,4 +1,4 @@
-import { Activity, Monitor, Wifi, WifiOff, Car } from "lucide-react";
+import { Activity, Car, Monitor, Wifi, WifiOff } from "lucide-react";
 
 interface PerformancePanelProps {
   totalVehicles: number;
@@ -15,92 +15,67 @@ function PerformancePanel ({
   fps,
   frameTime,
 }: PerformancePanelProps) {
-  return (
-    <div className='rounded-xl border border-slate-700 bg-slate-800 p-6'>
-      <div className='mb-6 flex items-center gap-3'>
-        <Activity className='h-6 w-6 text-cyan-400' />
+  const items = [
+    {
+      label: "Total Vehicles",
+      value: totalVehicles,
+      icon: <Car className='h-4 w-4 text-cyan-400' />,
+    },
+    {
+      label: "Visible Vehicles",
+      value: visibleVehicles,
+      icon: <Activity className='h-4 w-4 text-green-400' />,
+    },
+    {
+      label: "Connection",
+      value: connected ? "Connected" : "Disconnected",
+      icon: connected ? (
+        <Wifi className='h-4 w-4 text-green-400' />
+      ) : (
+        <WifiOff className='h-4 w-4 text-red-400' />
+      ),
+      valueClass: connected ? "text-green-400" : "text-red-400",
+    },
+    {
+      label: "Render Mode",
+      value: "Canvas",
+      icon: <Monitor className='h-4 w-4 text-yellow-400' />,
+    },
+    {
+      label: "FPS",
+      value: fps,
+      icon: <Monitor className='h-4 w-4 text-purple-400' />,
+    },
+    {
+      label: "Frame Time",
+      value: `${frameTime.toFixed(2)} ms`,
+      icon: <Activity className='h-4 w-4 text-orange-400' />,
+    },
+  ];
 
-        <h2 className='text-2xl font-semibold text-white'>Performance</h2>
+  return (
+    <div className='rounded-xl border border-slate-700 bg-slate-800 p-5'>
+      <div className='mb-5 flex items-center gap-2'>
+        <Activity className='h-5 w-5 text-cyan-400' />
+
+        <h2 className='text-xl font-semibold text-white'>Performance</h2>
       </div>
 
-      <div className='space-y-5'>
-        {/* Total Vehicles */}
+      <div className='space-y-3'>
+        {items.map(item => (
+          <div
+            key={item.label}
+            className='flex items-center justify-between rounded-lg bg-slate-900 px-4 py-3'
+          >
+            <div className='flex items-center gap-3'>
+              {item.icon}
 
-        <div className='flex items-center justify-between rounded-lg bg-slate-700/40 p-3'>
-          <div className='flex items-center gap-3'>
-            <Car className='h-5 w-5 text-cyan-400' />
+              <span className='text-sm text-slate-300'>{item.label}</span>
+            </div>
 
-            <span className='text-slate-300'>Total Vehicles</span>
+            <span className={`font-semibold ${item.valueClass ?? "text-white"}`}>{item.value}</span>
           </div>
-
-          <span className='font-semibold text-white'>{totalVehicles}</span>
-        </div>
-
-        {/* Visible Vehicles */}
-
-        <div className='flex items-center justify-between rounded-lg bg-slate-700/40 p-3'>
-          <div className='flex items-center gap-3'>
-            <Activity className='h-5 w-5 text-emerald-400' />
-
-            <span className='text-slate-300'>Visible Vehicles</span>
-          </div>
-
-          <span className='font-semibold text-white'>{visibleVehicles}</span>
-        </div>
-
-        {/* Connection */}
-
-        <div className='flex items-center justify-between rounded-lg bg-slate-700/40 p-3'>
-          <div className='flex items-center gap-3'>
-            {connected ? (
-              <Wifi className='h-5 w-5 text-green-400' />
-            ) : (
-              <WifiOff className='h-5 w-5 text-red-400' />
-            )}
-
-            <span className='text-slate-300'>Connection</span>
-          </div>
-
-          <span className={`font-semibold ${connected ? "text-green-400" : "text-red-400"}`}>
-            {connected ? "Connected" : "Disconnected"}
-          </span>
-        </div>
-
-        {/* Render Mode */}
-
-        <div className='flex items-center justify-between rounded-lg bg-slate-700/40 p-3'>
-          <div className='flex items-center gap-3'>
-            <Monitor className='h-5 w-5 text-yellow-400' />
-
-            <span className='text-slate-300'>Render Mode</span>
-          </div>
-
-          <span className='font-semibold text-white'>Canvas</span>
-        </div>
-
-        {/* FPS */}
-
-        <div className='flex items-center justify-between rounded-lg bg-slate-700/40 p-3'>
-          <div className='flex items-center gap-3'>
-            <Monitor className='h-5 w-5 text-purple-400' />
-
-            <span className='text-slate-300'>FPS</span>
-          </div>
-
-          <span className='font-semibold text-white'>{fps}</span>
-        </div>
-
-        {/* Frame Time */}
-
-        <div className='flex items-center justify-between rounded-lg bg-slate-700/40 p-3'>
-          <div className='flex items-center gap-3'>
-            <Activity className='h-5 w-5 text-orange-400' />
-
-            <span className='text-slate-300'>Frame Time</span>
-          </div>
-
-          <span className='font-semibold text-white'>{frameTime.toFixed(2)} ms</span>
-        </div>
+        ))}
       </div>
     </div>
   );

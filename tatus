@@ -1,0 +1,47 @@
+warning: in the working copy of 'frontend/src/components/dashboard/LiveMapCard.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/components/dashboard/PerformancePanel.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/components/dashboard/RenderLoopDemo.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/components/dashboard/VehicleDetailsPanel.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/components/layout/Header.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/components/layout/Sidebar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/constants/performance.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/hooks/useVehicleStream.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/layouts/MainLayout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/routes/AppRoutes.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/services/loadTestTelemetry.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/services/mockTelemetry.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/services/socket.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/store/vehicleStore.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/types/alert.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/types/vehicle.ts', LF will be replaced by CRLF the next time Git touches it
+ frontend/package-lock.json                         | 1505 [32m+++++++++++++++[m[31m-----[m
+ frontend/package.json                              |    5 [32m+[m
+ frontend/src/components/dashboard/CanvasLayer.tsx  |   24 [32m+[m[31m-[m
+ frontend/src/components/dashboard/FleetMap.tsx     |   67 [32m+[m[31m-[m
+ frontend/src/components/dashboard/LiveMapCard.tsx  |    8 [32m+[m[31m-[m
+ .../src/components/dashboard/PerformancePanel.tsx  |  135 [32m+[m[31m-[m
+ .../src/components/dashboard/RenderLoopDemo.tsx    |   15 [32m+[m[31m-[m
+ .../components/dashboard/VehicleDetailsPanel.tsx   |  286 [32m+++[m[31m-[m
+ .../dashboard/analytics/FleetAnalytics.tsx         |    0
+ .../components/dashboard/analytics/SpeedChart.tsx  |    0
+ .../components/dashboard/analytics/StatusChart.tsx |    0
+ .../dashboard/analytics/UtilizationCard.tsx        |    0
+ frontend/src/components/layout/Header.tsx          |    2 [32m+[m[31m-[m
+ frontend/src/components/layout/Sidebar.tsx         |    2 [32m+[m[31m-[m
+ frontend/src/constants/performance.ts              |    2 [32m+[m[31m-[m
+ frontend/src/context/VehicleContext.tsx            |   50 [32m+[m[31m-[m
+ frontend/src/hooks/useVehicleStream.ts             |   42 [32m+[m[31m-[m
+ frontend/src/index.css                             |    2 [32m+[m[31m-[m
+ frontend/src/layouts/MainLayout.tsx                |   15 [32m+[m[31m-[m
+ frontend/src/main.tsx                              |    3 [32m+[m
+ frontend/src/map/VehicleCanvasLayer.ts             |  177 [31m---[m
+ frontend/src/map/vehicleInterpolation.ts           |  103 [31m--[m
+ frontend/src/pages/Dashboard.tsx                   |  114 [32m+[m[31m-[m
+ frontend/src/routes/AppRoutes.tsx                  |   17 [32m+[m
+ frontend/src/services/loadTestTelemetry.ts         |   11 [32m+[m[31m-[m
+ frontend/src/services/mockTelemetry.ts             |   63 [32m+[m[31m-[m
+ frontend/src/services/socket.ts                    |    2 [32m+[m[31m-[m
+ frontend/src/store/vehicleStore.ts                 |  221 [32m++[m[31m-[m
+ frontend/src/types/alert.ts                        |   27 [32m+[m
+ frontend/src/types/vehicle.ts                      |   32 [32m+[m
+ 30 files changed, 2010 insertions(+), 920 deletions(-)

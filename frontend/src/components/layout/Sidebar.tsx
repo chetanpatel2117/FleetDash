@@ -23,7 +23,7 @@ const menuItems = [
   },
   {
     title: "Live Map",
-    path: "/live-map",
+    path: "/map",
     icon: Map,
   },
   {

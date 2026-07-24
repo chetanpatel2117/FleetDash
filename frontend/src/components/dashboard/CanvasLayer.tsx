@@ -1,12 +1,22 @@
+import { useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
-import { useEffect } from "react";
-import { VehicleCanvasLayer } from "../../map/VehicleCanvasLayer";
 
-export default function CanvasLayer () {
+import { VehicleCanvasLayer } from "../../map/VehicleCanvasLayer";
+import type { Vehicle } from "../../types/vehicle";
+
+interface CanvasLayerProps {
+  vehicles: Vehicle[];
+}
+
+export default function CanvasLayer ({ vehicles }: CanvasLayerProps) {
   const map = useMap();
+
+  const layerRef = useRef<VehicleCanvasLayer | null>(null);
 
   useEffect(() => {
     const layer = new VehicleCanvasLayer();
+
+    layerRef.current = layer;
 
     map.addLayer(layer);
 
@@ -14,6 +24,10 @@ export default function CanvasLayer () {
       map.removeLayer(layer);
     };
   }, [map]);
+
+  useEffect(() => {
+    layerRef.current?.setVehicles(vehicles);
+  }, [vehicles]);
 
   return null;
 }

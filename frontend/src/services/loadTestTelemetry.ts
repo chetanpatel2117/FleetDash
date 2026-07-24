@@ -1,4 +1,5 @@
 import type { Vehicle } from "../types/vehicle";
+import { generateVehicleMetadata } from "./vehicleMetadata";
 
 
 export function generateTestVehicles(
@@ -9,7 +10,6 @@ export function generateTestVehicles(
   const vehicles: Vehicle[] = [];
 
 
-
   for (let i = 0; i < count; i++) {
 
 
@@ -18,6 +18,7 @@ export function generateTestVehicles(
       id: `TEST-${i}`,
 
       name: `Vehicle ${i}`,
+
 
       latitude:
         11.0168 + Math.random() * 0.05,
@@ -46,15 +47,15 @@ export function generateTestVehicles(
 
 
       lastUpdated:
-        new Date().toISOString()
+        new Date().toISOString(),
+
+
+      ...generateVehicleMetadata()
 
     });
-
 
   }
 
 
-
   return vehicles;
-
 }

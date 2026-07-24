@@ -1,59 +1,90 @@
 import type { ReactNode } from "react";
 import type { Vehicle } from "../types/vehicle";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-import { mockVehicles, generateVehicleUpdates } from "../services/mockTelemetry";
+import { createContext, useContext, useState, useEffect } from "react";
+
+import { mockVehicles } from "../services/mockTelemetry";
+
 import { useVehicleStream } from "../hooks/useVehicleStream";
+
+import { updateVehicles } from "../store/vehicleStore";
 
 interface VehicleContextType {
   vehicles: Vehicle[];
+
   setVehicles: React.Dispatch<React.SetStateAction<Vehicle[]>>;
 
   selectedVehicle: Vehicle | null;
+
   setSelectedVehicle: React.Dispatch<React.SetStateAction<Vehicle | null>>;
 
   connected: boolean;
+
   setConnected: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
+export const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
 
 interface VehicleProviderProps {
   children: ReactNode;
 }
 
 function VehicleProvider ({ children }: VehicleProviderProps) {
+  // Initial data before socket connection
+
+
   const [vehicles, setVehicles] = useState<Vehicle[]>(mockVehicles);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+
   const [connected, setConnected] = useState(false);
 
-  const USE_MOCK_TELEMETRY = true;
+  /*
+    Socket.io telemetry listener
+
+    Backend emits:
+
+    "telemetry:update"
+
+    Payload:
+
+    Vehicle[]
+  */
+  
 
   useVehicleStream({
     onVehicleUpdate: setVehicles,
+
     onConnectionChange: setConnected,
   });
 
+  /*
+    Sync React state with external vehicle store.
+
+    Canvas renderer reads directly
+    from vehicleStore.
+  */
   useEffect(() => {
-    if (!USE_MOCK_TELEMETRY) return;
+    updateVehicles(vehicles);
+  }, [vehicles]);
 
-    const interval = setInterval(() => {
-      setVehicles(currentVehicles => generateVehicleUpdates(currentVehicles));
-    }, 2000);
+  return (
+    <VehicleContext.Provider
+      value={{
+        vehicles,
 
-    return () => clearInterval(interval);
-  }, []);
+        setVehicles,
 
-  const value = useMemo(
-    () => ({
-      vehicles,
-      setVehicles,
-      selectedVehicle,
-      setSelectedVehicle,
-      connected,
-      setConnected,
-    }),
-    [connected, selectedVehicle, vehicles]
+        selectedVehicle,
+
+        setSelectedVehicle,
+
+        connected,
+
+        setConnected,
+      }}
+    >
+      {children}
+    </VehicleContext.Provider>
   );
 
   return <VehicleContext.Provider value={value}>{children}</VehicleContext.Provider>;
