@@ -8,9 +8,9 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
-  testMatch: ["**/tests/**/*.test.ts"],
-  testPathIgnorePatterns: [
-    "/node_modules/",
-    "/dist/"
-  ]
+  testMatch: [
+    "<rootDir>/tests/**/*.test.ts",
+    "<rootDir>/src/**/__tests__/**/*.test.ts",
+  ],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
 };
