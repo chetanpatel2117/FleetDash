@@ -71,23 +71,16 @@ function VehicleProvider ({ children }: VehicleProviderProps) {
     <VehicleContext.Provider
       value={{
         vehicles,
-
         setVehicles,
-
         selectedVehicle,
-
         setSelectedVehicle,
-
         connected,
-
         setConnected,
       }}
     >
       {children}
     </VehicleContext.Provider>
   );
-
-  return <VehicleContext.Provider value={value}>{children}</VehicleContext.Provider>;
 }
 
 export function useVehicleContext () {

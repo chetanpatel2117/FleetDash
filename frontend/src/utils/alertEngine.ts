@@ -18,11 +18,12 @@ export function generateAlerts(
       alerts.push({
         id: `${vehicle.id}-speed`,
         vehicleId: vehicle.id,
+        vehicleName: vehicle.name,
         type: "overspeed",
         severity: "warning",
-        message:
-          `${vehicle.name} exceeded speed limit (${vehicle.speed} km/h)`,
+        message: `${vehicle.name} exceeded speed limit (${vehicle.speed} km/h)`,
         timestamp: Date.now(),
+        resolved: false,
       });
 
     }
@@ -35,11 +36,12 @@ export function generateAlerts(
       alerts.push({
         id: `${vehicle.id}-fuel`,
         vehicleId: vehicle.id,
+        vehicleName: vehicle.name,
         type: "low_fuel",
         severity: "warning",
-        message:
-          `${vehicle.name} fuel level is low (${vehicle.fuelLevel}%)`,
+        message: `${vehicle.name} fuel level is low (${vehicle.fuelLevel}%)`,
         timestamp: Date.now(),
+        resolved: false,
       });
 
     }
@@ -52,11 +54,12 @@ export function generateAlerts(
       alerts.push({
         id: `${vehicle.id}-battery`,
         vehicleId: vehicle.id,
+        vehicleName: vehicle.name,
         type: "low_battery",
         severity: "critical",
-        message:
-          `${vehicle.name} battery level is low (${vehicle.batteryLevel}%)`,
+        message: `${vehicle.name} battery level is low (${vehicle.batteryLevel}%)`,
         timestamp: Date.now(),
+        resolved: false,
       });
 
     }
@@ -69,11 +72,12 @@ export function generateAlerts(
       alerts.push({
         id: `${vehicle.id}-offline`,
         vehicleId: vehicle.id,
+        vehicleName: vehicle.name,
         type: "offline",
         severity: "critical",
-        message:
-          `${vehicle.name} is offline`,
+        message: `${vehicle.name} is offline`,
         timestamp: Date.now(),
+        resolved: false,
       });
 
     }
@@ -86,11 +90,12 @@ export function generateAlerts(
       alerts.push({
         id: `${vehicle.id}-gps`,
         vehicleId: vehicle.id,
+        vehicleName: vehicle.name,
         type: "gps_issue",
         severity: "warning",
-        message:
-          `${vehicle.name} GPS accuracy degraded`,
+        message: `${vehicle.name} GPS accuracy degraded`,
         timestamp: Date.now(),
+        resolved: false,
       });
 
     }
@@ -103,11 +108,12 @@ export function generateAlerts(
       alerts.push({
         id: `${vehicle.id}-signal`,
         vehicleId: vehicle.id,
+        vehicleName: vehicle.name,
         type: "gps_issue",
         severity: "warning",
-        message:
-          `${vehicle.name} signal strength weak`,
+        message: `${vehicle.name} signal strength weak`,
         timestamp: Date.now(),
+        resolved: false,
       });
 
     }
@@ -120,14 +126,12 @@ export function generateAlerts(
       alerts.push({
         id: `${vehicle.id}-health`,
         vehicleId: vehicle.id,
+        vehicleName: vehicle.name,
         type: "health_issue",
-        severity:
-          vehicle.healthStatus === "Critical"
-            ? "critical"
-            : "warning",
-        message:
-          `${vehicle.name} health status: ${vehicle.healthStatus}`,
+        severity: vehicle.healthStatus === "Critical" ? "critical" : "warning",
+        message: `${vehicle.name} health status: ${vehicle.healthStatus}`,
         timestamp: Date.now(),
+        resolved: false,
       });
 
     }

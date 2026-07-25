@@ -8,8 +8,6 @@ interface LiveMapCardProps {
 }
 
 function LiveMapCard ({ vehicles }: LiveMapCardProps) {
-  const hasVehicles = vehicles.length > 0;
-
   return (
     <div className='rounded-xl border border-slate-700 bg-slate-900 p-5'>
       <h2 className='mb-4 text-xl font-semibold text-white'>Live Fleet Map</h2>

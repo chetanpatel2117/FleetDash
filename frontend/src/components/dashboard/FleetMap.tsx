@@ -1,7 +1,5 @@
-import { MapContainer, TileLayer } from "react-leaflet";
-import type { Vehicle } from "../../types/vehicle";
-
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import type { Vehicle } from "../../types/vehicle";
 
 import { useEffect } from "react";
 
@@ -21,11 +19,9 @@ interface FleetMapProps {
   vehicles: Vehicle[];
 }
 
-function FollowSelectedVehicle () {
+function FollowSelectedVehicle() {
   const map = useMap();
-
   const selectedVehicle = useSelectedVehicle();
-
   const { follow } = useFollowVehicle();
 
   useEffect(() => {
@@ -39,38 +35,24 @@ function FollowSelectedVehicle () {
   return null;
 }
 
-function FleetMap ({ vehicles }: FleetMapProps) {
+function FleetMap({ vehicles }: FleetMapProps) {
   return (
-    <div
-      className='
-      h-full 
-      w-full 
-      min-w-0 
-      overflow-hidden 
-      rounded-lg
-    '
-    >
+    <div className="h-full w-full min-w-0 overflow-hidden rounded-lg">
       <MapContainer
         center={[11.0168, 76.9558]}
         zoom={13}
         zoomControl={false}
         scrollWheelZoom
-        className='
-          h-full
-          w-full
-        '
+        className="h-full w-full"
       >
         <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
-          url='
-          https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
-          '
+          attribution="&copy; OpenStreetMap contributors"
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
         <CanvasLayer vehicles={vehicles} />
 
         <MapControls />
-
         <FollowSelectedVehicle />
         <RouteReplayLayer />
         <RouteReplayControls />

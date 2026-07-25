@@ -1,6 +1,9 @@
 import type { TelemetryData } from "../interfaces/telemetry.interface";
 import type { ApiResponse } from "../interfaces/apiResponse.interface";
 import { saveTelemetry } from "./telemetryStorage.service";
+import { runTelemetryWorker } from "../workers";
+import { checkVehicleBoundary } from "./geofence.service";
+import { publishVehicleUpdate, publishVehicleAlert } from "./redisPublisher";
 
 export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
