@@ -3,11 +3,12 @@ import {
   getTelemetryHistory,
   receiveTelemetry,
 } from "../controllers/telemetry.controller";
+import { requireAdmin } from "../middleware/auth.middleware";
 
 const router = Router();
 
 router.post("/api/telemetry", receiveTelemetry);
-router.get("/api/telemetry/history/:vehicleId", getTelemetryHistory);
+router.get("/api/telemetry/history/:vehicleId", requireAdmin, getTelemetryHistory);
 
 /**
  * @swagger
@@ -46,6 +47,5 @@ router.get("/api/telemetry/history/:vehicleId", getTelemetryHistory);
  *       400:
  *         description: Invalid telemetry data
  */
-router.post("/api/telemetry", receiveTelemetry);
-
+// Note: POST /api/telemetry is defined above; avoid duplicate registration
 export default router;

@@ -1,8 +1,20 @@
-import { Bell, Search, CircleUserRound } from "lucide-react";
+import { useState } from "react";
+import { Bell, CircleUserRound, LogOut, Search, Settings, UserRound } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useVehicleContext } from "../../context/VehicleContext";
+import { useAuth } from "../../context/AuthContext";
 
-function Header () {
-  const { connected } = useVehicleContext();
+function Header() {
+  const { connected, dashboardSearch, setDashboardSearch } = useVehicleContext();
+  const { logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to logout?");
+    if (confirmed) {
+      logout();
+    }
+  };
 
   const connectionStatus = connected
     ? {
@@ -43,6 +55,8 @@ function Header () {
           <input
             type='text'
             placeholder='Search vehicles...'
+            value={dashboardSearch}
+            onChange={e => setDashboardSearch(e.target.value)}
             className='bg-transparent text-sm text-white outline-none placeholder:text-slate-500'
           />
         </div>
@@ -53,9 +67,45 @@ function Header () {
         </button>
 
         {/* Profile */}
-        <button className='rounded-full bg-slate-800 p-2 transition-colors hover:bg-slate-700'>
-          <CircleUserRound size={22} className='text-white' />
-        </button>
+        <div className='relative'>
+          <button
+            onClick={() => setMenuOpen((open) => !open)}
+            className='rounded-full bg-slate-800 p-2 transition-colors hover:bg-slate-700'
+          >
+            <CircleUserRound size={22} className='text-white' />
+          </button>
+
+          {menuOpen ? (
+            <div className='absolute right-0 mt-2 w-56 rounded-xl border border-slate-700 bg-slate-800 p-2 shadow-xl shadow-slate-950/40'>
+              <Link
+                to='/profile'
+                onClick={() => setMenuOpen(false)}
+                className='flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-200 transition-colors hover:bg-slate-700'
+              >
+                <UserRound size={16} className='text-cyan-400' />
+                Profile
+              </Link>
+              <Link
+                to='/settings'
+                onClick={() => setMenuOpen(false)}
+                className='flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-200 transition-colors hover:bg-slate-700'
+              >
+                <Settings size={16} className='text-cyan-400' />
+                Settings
+              </Link>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogout();
+                }}
+                className='flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-red-300 transition-colors hover:bg-slate-700'
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
+            </div>
+          ) : null}
+        </div>
       </div>
     </header>
   );

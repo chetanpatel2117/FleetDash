@@ -1,7 +1,11 @@
 import { createClient } from "redis";
 import { io } from "../socket";
 
-const subscriber = createClient();
+const subscriber = createClient({
+  socket: {
+    reconnectStrategy: false,
+  },
+});
 
 subscriber.on("error", (err) => {
   console.error("Redis Subscriber Error:", err);
@@ -9,7 +13,12 @@ subscriber.on("error", (err) => {
 
 export const startGeofenceSubscriber = async (): Promise<void> => {
   if (!subscriber.isOpen) {
-    await subscriber.connect();
+    try {
+      await subscriber.connect();
+    } catch (error) {
+      console.warn("Warning: Redis subscriber failed to connect", error);
+      return;
+    }
   }
 
   await subscriber.subscribe("geofence:entry", (message) => {

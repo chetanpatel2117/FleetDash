@@ -7,12 +7,15 @@ import "./index.css";
 
 import App from "./App";
 import { VehicleProvider } from "./context/VehicleProvider";
+import { AuthProvider } from "./context/AuthContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <VehicleProvider>
       <BrowserRouter>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </BrowserRouter>
     </VehicleProvider>
   </StrictMode>,

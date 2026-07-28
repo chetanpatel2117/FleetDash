@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Route, RefreshCw, LocateFixed } from "lucide-react";
+import { useFollowVehicle } from "../hooks/useFollowVehicle";
 
 function SettingsPage () {
-  const [autoFollow, setAutoFollow] = useState(true);
+  const { follow, toggleFollow } = useFollowVehicle();
 
   const [showTrails, setShowTrails] = useState(true);
 
@@ -35,8 +36,8 @@ function SettingsPage () {
 
             <input
               type='checkbox'
-              checked={autoFollow}
-              onChange={e => setAutoFollow(e.target.checked)}
+              checked={follow}
+              onChange={() => toggleFollow()}
               className='h-5 w-5'
             />
           </div>

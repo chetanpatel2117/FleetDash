@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 import StatCard from "../components/dashboard/StatCard";
 import LiveMapCard from "../components/dashboard/LiveMapCard";
@@ -7,6 +7,8 @@ import VehicleTable from "../components/dashboard/VehicleTable";
 import VehicleDetailsPanel from "../components/dashboard/VehicleDetailsPanel";
 import PerformancePanel from "../components/dashboard/PerformancePanel";
 import RenderLoopDemo from "../components/dashboard/RenderLoopDemo";
+import SearchBar from "../components/dashboard/SearchBar";
+import StatusFilter from "../components/dashboard/StatusFilter";
 
 import { useVehicleContext } from "../context/VehicleContext";
 import { getDashboardStats } from "../constants/dashboardStats";
@@ -16,9 +18,14 @@ import { ENABLE_LOAD_TEST, LOAD_TEST_COUNT } from "../constants/performance";
 import { updateVehicles } from "../store/vehicleStore";
 
 function Dashboard() {
-  const { vehicles, connected } = useVehicleContext();
-  const [search] = useState("");
-  const [statusFilter] = useState("all");
+  const {
+    vehicles,
+    connected,
+    dashboardSearch: search,
+    dashboardStatusFilter: statusFilter,
+    setDashboardSearch,
+    setDashboardStatusFilter,
+  } = useVehicleContext();
   const { fps, frameTime } = useFPS();
 
   useEffect(() => {
@@ -51,6 +58,16 @@ function Dashboard() {
         {dashboardStats.map((stat) => (
           <StatCard key={stat.title} title={stat.title} value={stat.value} icon={stat.icon} />
         ))}
+      </section>
+
+      <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_220px] xl:items-end">
+        <div className="w-full">
+          <SearchBar search={search} setSearch={setDashboardSearch} />
+        </div>
+
+        <div className="w-full xl:w-56">
+          <StatusFilter status={statusFilter} setStatus={setDashboardStatusFilter} />
+        </div>
       </section>
 
       <section className="grid grid-cols-1 gap-6 items-stretch h-[600px] xl:grid-cols-3">

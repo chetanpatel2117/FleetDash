@@ -9,7 +9,7 @@ function MainLayout () {
 
       <div className='flex min-h-0 flex-1 flex-col'>
         <Header />
-        <main className='flex-1 overflow-y-auto overflow-x-hiddden bg-slate-900'>
+        <main className='flex-1 overflow-y-auto overflow-x-hidden bg-slate-900'>
           <div className='mx-auto w-full max-w-[1600px] p-6'>
             <Outlet />
           </div>

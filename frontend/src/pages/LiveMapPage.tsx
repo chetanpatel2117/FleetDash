@@ -5,6 +5,7 @@ import VehicleDetailsPanel from "../components/dashboard/VehicleDetailsPanel";
 import { useSelectedVehicle } from "../hooks/useSelectedVehicle";
 import { useState } from "react";
 import MapFilters from "../map/MapFilters";
+import { useFollowVehicle } from "../hooks/useFollowVehicle";
 
 
 
@@ -13,9 +14,9 @@ function LiveMapPage () {
 
   const selectedVehicle = useSelectedVehicle();
 
-  const [filter, setFilter] = useState<"all" | "moving" | "idle" | "offline">("all");
+  const { follow, toggleFollow } = useFollowVehicle();
 
-  const [followVehicle, setFollowVehicle] = useState(false);
+  const [filter, setFilter] = useState<"all" | "moving" | "idle" | "offline">("all");
 
   const filteredVehicles = vehicles.filter(vehicle => {
     if (filter === "all") return true;
@@ -28,16 +29,16 @@ function LiveMapPage () {
       <h1 className='mb-4 text-2xl font-bold'>Live Fleet Map</h1>
       <MapStats vehicles={vehicles} />
       <button
-        onClick={() => setFollowVehicle(prev => !prev)}
+        onClick={toggleFollow}
         className={`
     rounded-lg
     px-4
     py-2
     font-medium
-    ${followVehicle ? "bg-green-500 text-black" : "bg-slate-800 text-white border border-slate-700"}
+    ${follow ? "bg-green-500 text-black" : "bg-slate-800 text-white border border-slate-700"}
   `}
       >
-        {followVehicle ? "Following Vehicle" : "Follow Selected Vehicle"}
+        {follow ? "Following Vehicle" : "Follow Selected Vehicle"}
       </button>
       
       <MapFilters filter={filter} setFilter={setFilter} />

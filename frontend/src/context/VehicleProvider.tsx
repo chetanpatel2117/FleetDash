@@ -15,6 +15,8 @@ export function VehicleProvider({ children }: VehicleProviderProps) {
   const [vehicles, setVehicles] = useState<Vehicle[]>(mockVehicles);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [connected, setConnected] = useState(false);
+  const [dashboardSearch, setDashboardSearch] = useState("");
+  const [dashboardStatusFilter, setDashboardStatusFilter] = useState("all");
 
   useVehicleStream({
     onVehicleUpdate: setVehicles,
@@ -34,6 +36,10 @@ export function VehicleProvider({ children }: VehicleProviderProps) {
         setSelectedVehicle,
         connected,
         setConnected,
+        dashboardSearch,
+        setDashboardSearch,
+        dashboardStatusFilter,
+        setDashboardStatusFilter,
       }}
     >
       {children}

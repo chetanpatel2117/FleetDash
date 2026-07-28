@@ -1,7 +1,11 @@
 import { createClient } from "redis";
 import { GeofenceAlert } from "../interfaces/alert.interface";
 
-export const publisher = createClient();
+export const publisher = createClient({
+  socket: {
+    reconnectStrategy: false,
+  },
+});
 
 publisher.on("error", (err) => {
   console.error("Redis Publisher Error:", err);
@@ -9,8 +13,12 @@ publisher.on("error", (err) => {
 
 export const connectPublisher = async (): Promise<void> => {
   if (!publisher.isOpen) {
-    await publisher.connect();
-    console.log("✅ Redis Publisher Connected");
+    try {
+      await publisher.connect();
+      console.log("✅ Redis Publisher Connected");
+    } catch (error) {
+      console.warn("Warning: Redis publisher failed to connect", error);
+    }
   }
 };
 

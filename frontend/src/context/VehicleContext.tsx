@@ -8,6 +8,10 @@ export interface VehicleContextType {
   setSelectedVehicle: React.Dispatch<React.SetStateAction<Vehicle | null>>;
   connected: boolean;
   setConnected: React.Dispatch<React.SetStateAction<boolean>>;
+  dashboardSearch: string;
+  setDashboardSearch: React.Dispatch<React.SetStateAction<string>>;
+  dashboardStatusFilter: string;
+  setDashboardStatusFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const VehicleContext = createContext<VehicleContextType | undefined>(

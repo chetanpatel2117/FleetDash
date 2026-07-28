@@ -5,10 +5,11 @@ import {
   BarChart3,
   Bell,
   Settings,
-  CircleUserRound,
+  LogOut,
 } from "lucide-react";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const menuItems = [
   {
@@ -44,8 +45,18 @@ const menuItems = [
 ];
 
 function Sidebar () {
+  const { isAdmin, logout } = useAuth();
+
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to logout?");
+    if (confirmed) {
+      logout();
+    }
+  };
+
   return (
-<aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r border-slate-700 bg-slate-900">      {/* Logo Section */}
+    <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r border-slate-700 bg-slate-900">
+      {/* Logo Section */}
       <div className='h-16 flex items-center gap-3 px-6 border-b border-slate-700'>
         <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500'>
           <Truck size={22} className='text-white' />
@@ -80,18 +91,27 @@ function Sidebar () {
       </nav>
       <div className='border-t border-slate-700 p-4'>
         <div className='flex items-center gap-3'>
-          <div className='flex h-10 w-10 items-center justify-center rounded-full bg-slate-700'>
-            <CircleUserRound size={22} className='text-white' />
-          </div>
-
-          <div>
-            <h3 className='text-sm font-semibold text-white'>Alosius</h3>
-
-            <p className='text-xs text-slate-400'>Fleet Manager</p>
-          </div>
+        
         </div>
+
+        {isAdmin ? (
+          <button
+            onClick={handleLogout}
+            className='mt-3 flex w-full items-center gap-2 bg-red-500 rounded-lg border border-slate-700 px-3 py-2 text-sm text-black transition-colors hover:bg-cyan-600'
+          >
+            <LogOut size={16} />
+            Logout
+          </button>
+        ) : (
+          <Link
+            to='/login'
+            className='mt-3 flex w-full items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-800 hover:text-white'
+          >
+            <LogOut size={16} />
+            Login
+          </Link>
+        )}
       </div>
-      
     </aside>
   );
 }
