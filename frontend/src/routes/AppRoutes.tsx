@@ -10,6 +10,7 @@ import AlertsPage from "../pages/AlertsPage";
 import SettingsPage from "../pages/SettingsPage";
 import LiveMapPage from "../pages/LiveMapPage";
 import LoginPage from "../pages/LoginPage";
+import ProfilePage from "../pages/ProfilePage";
 
 function AppRoutes () {
   return (
@@ -34,6 +35,8 @@ function AppRoutes () {
         <Route path='/alerts' element={<AlertsPage />} />
 
         <Route path='/settings' element={<SettingsPage />} />
+
+        <Route path='/profile' element={<ProfilePage />} />
       </Route>
     </Routes>
   );

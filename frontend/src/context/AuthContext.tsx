@@ -1,8 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface AuthUser {
+  username: string;
+  role: string;
+}
+
 interface AuthContextType {
   isAdmin: boolean;
+  user: AuthUser | null;
   login: (username: string, password: string, remember?: boolean) => Promise<boolean>;
   logout: () => void;
 }
@@ -24,6 +30,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       return false;
     }
+  });
+
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    try {
+      const storedUser = sessionStorage.getItem("fleetdash:user");
+      if (storedUser) {
+        return JSON.parse(storedUser);
+      }
+    } catch {}
+
+    return null;
   });
 
   const navigate = useNavigate();
@@ -65,8 +82,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await resp.json();
 
       if (data && data.token) {
+        const nextUser = {
+          username: data.username || username,
+          role: data.role || "admin",
+        };
+
         setRememberToken(Boolean(remember));
         setToken(data.token);
+        setUser(nextUser);
+
+        try {
+          sessionStorage.setItem("fleetdash:user", JSON.stringify(nextUser));
+          if (remember) {
+            localStorage.setItem("fleetdash:user", JSON.stringify(nextUser));
+          } else {
+            localStorage.removeItem("fleetdash:user");
+          }
+        } catch {}
+
         navigate("/", { replace: true });
         return true;
       }
@@ -83,15 +116,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   function logout() {
     setToken(null);
     setRememberToken(false);
+    setUser(null);
     try {
       localStorage.removeItem("fleetdash:token");
       sessionStorage.removeItem("fleetdash:token");
+      localStorage.removeItem("fleetdash:user");
+      sessionStorage.removeItem("fleetdash:user");
     } catch {}
     navigate("/login");
   }
 
   return (
-    <AuthContext.Provider value={{ isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ isAdmin, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bell, CircleUserRound, LogOut, Search, Settings, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useVehicleContext } from "../../context/VehicleContext";
@@ -8,6 +8,25 @@ function Header() {
   const { connected, dashboardSearch, setDashboardSearch } = useVehicleContext();
   const { logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuOpen &&
+        menuRef.current &&
+        buttonRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   const handleLogout = () => {
     const confirmed = window.confirm("Are you sure you want to logout?");
@@ -69,6 +88,7 @@ function Header() {
         {/* Profile */}
         <div className='relative'>
           <button
+            ref={buttonRef}
             onClick={() => setMenuOpen((open) => !open)}
             className='rounded-full bg-slate-800 p-2 transition-colors hover:bg-slate-700'
           >
@@ -76,7 +96,10 @@ function Header() {
           </button>
 
           {menuOpen ? (
-            <div className='absolute right-0 mt-2 w-56 rounded-xl border border-slate-700 bg-slate-800 p-2 shadow-xl shadow-slate-950/40'>
+            <div
+              ref={menuRef}
+              className='absolute right-0 mt-2 w-56 rounded-xl border border-slate-700 bg-slate-800 p-2 shadow-xl shadow-slate-950/40'
+            >
               <Link
                 to='/profile'
                 onClick={() => setMenuOpen(false)}
