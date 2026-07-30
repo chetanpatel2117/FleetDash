@@ -24,19 +24,13 @@ function AppRoutes () {
           </RequireAuth>
         }
       >
-        <Route path='/' element={<Dashboard />} />
-
-        <Route path='/vehicles' element={<VehiclesPage />} />
-
-        <Route path='/map' element={<LiveMapPage />} />
-
-        <Route path='/analytics' element={<AnalyticsPage />} />
-
-        <Route path='/alerts' element={<AlertsPage />} />
-
-        <Route path='/settings' element={<SettingsPage />} />
-
-        <Route path='/profile' element={<ProfilePage />} />
+          <Route index element={<Dashboard />} />
+        <Route path='vehicles' element={<VehiclesPage />} />
+        <Route path='map' element={<LiveMapPage />} />
+        <Route path='analytics' element={<AnalyticsPage />} />
+        <Route path='alerts' element={<AlertsPage />} />
+        <Route path='settings' element={<SettingsPage />} />
+        <Route path='profile' element={<ProfilePage />} />
       </Route>
     </Routes>
   );

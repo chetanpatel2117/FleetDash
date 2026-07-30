@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const [user, setUser] = useState<AuthUser | null>(() => {
     try {
-      const storedUser = sessionStorage.getItem("fleetdash:user");
+      const storedUser = sessionStorage.getItem("fleetdash:user") || localStorage.getItem("fleetdash:user");
       if (storedUser) {
         return JSON.parse(storedUser);
       }
