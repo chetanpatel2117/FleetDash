@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
 import { registerSocketHandlers } from "./socketHandlers";
 
-let io: Server;
+let io: Server | null = null;
 
 export const initializeSocket = (httpServer: HttpServer): Server => {
   io = new Server(httpServer, {

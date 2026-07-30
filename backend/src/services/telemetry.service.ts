@@ -4,6 +4,11 @@ import { saveTelemetry } from "./telemetryStorage.service";
 import { runTelemetryWorker } from "../workers";
 import { checkVehicleBoundary } from "./geofence.service";
 import { publishVehicleUpdate, publishVehicleAlert } from "./redisPublisher";
+import { publishGeofenceAlert } from "./geofencePublisher.service";
+import { getIO } from "../socket/socket";
+import { AlertService } from "./alert.service";
+
+const alertService = new AlertService();
 
 export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse> => {
   const { vehicleId, latitude, longitude, speed } = data;
@@ -65,44 +70,80 @@ export const processTelemetry = async (data: TelemetryData): Promise<ApiResponse
     };
   }
 
-  // Save telemetry
+  // Save telemetry (best-effort; continue processing even if persistence fails)
   try {
     await saveTelemetry(data);
   } catch (error) {
     console.error("Telemetry storage failed", error);
-
-    return {
-      success: false,
-      statusCode: 500,
-      message: "Telemetry received but storage failed",
-    };
   }
 
   const geofenceResult = checkVehicleBoundary(latitude, longitude);
+  const geofenceAlert = alertService.checkGeofenceState(
+    vehicleId,
+    geofenceResult.inside,
+    latitude,
+    longitude
+  );
+
+  if (geofenceAlert) {
+    try {
+      const io = getIO();
+      io.emit(geofenceAlert.event, geofenceAlert);
+    } catch (socketError) {
+      console.warn("Failed to emit geofence alert over Socket.io", socketError);
+    }
+
+    try {
+      await publishGeofenceAlert(geofenceAlert);
+    } catch (error) {
+      console.warn("Failed to publish geofence alert", error);
+    }
+  }
 
   // Emit telemetry through Socket.IO
   try {
-    const { io } = await import("../socket");
+    const io = getIO();
 
-    io?.emit("telemetry", {
+    io.emit("telemetry:update", {
+      id: vehicleId,
       vehicleId,
+      name: `Vehicle ${vehicleId}`,
       latitude,
       longitude,
       speed,
-      heading: data.heading,
-      status: data.status,
-      timestamp: new Date().toISOString(),
+      heading: data.heading ?? 0,
+      status: data.status ?? "moving",
+      lastUpdated: new Date().toISOString(),
+      driverName: "Fleet Driver",
+      vehicleType: "Truck",
+      fuelLevel: 100,
+      batteryLevel: 100,
+      signalStrength: 100,
+      gpsAccuracy: 2,
+      ignitionStatus: "ON",
+      healthStatus: "Good",
+      assignedRoute: "Live Route",
+      destination: "Warehouse",
+      eta: "Now",
     });
   } catch (socketError) {
     console.warn("Failed to emit telemetry over Socket.io", socketError);
   }
 
   // Publish telemetry update
-  await publishVehicleUpdate(workerResult.data);
+  try {
+    await publishVehicleUpdate(workerResult.data);
+  } catch (error) {
+    console.warn("Failed to publish vehicle update", error);
+  }
 
   // Publish alert if overspeed
   if (workerResult.data && workerResult.data.speed > 80) {
-    await publishVehicleAlert(workerResult.data);
+    try {
+      await publishVehicleAlert(workerResult.data);
+    } catch (error) {
+      console.warn("Failed to publish vehicle alert", error);
+    }
   }
 
   return {

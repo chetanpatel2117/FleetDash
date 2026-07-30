@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { useLiveAlerts } from "../hooks/useLiveAlerts";
 
 import StatCard from "../components/dashboard/StatCard";
 import LiveMapCard from "../components/dashboard/LiveMapCard";
@@ -27,6 +28,7 @@ function Dashboard() {
     setDashboardStatusFilter,
   } = useVehicleContext();
   const { fps, frameTime } = useFPS();
+  const liveAlerts = useLiveAlerts();
 
   useEffect(() => {
     if (ENABLE_LOAD_TEST) {
@@ -81,7 +83,27 @@ function Dashboard() {
 
       <section className="grid grid-cols-1 gap-3 items-start xl:grid-cols-3">
         <div className="xl:col-span-2">
-          <FleetActivity />
+          <div className="space-y-3">
+            <FleetActivity />
+            <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-white">Live Geofence Alerts</h3>
+                <span className="text-xs text-slate-400">{liveAlerts.length} active</span>
+              </div>
+              <div className="space-y-2">
+                {liveAlerts.length === 0 ? (
+                  <p className="text-sm text-slate-500">No geofence activity yet.</p>
+                ) : (
+                  liveAlerts.map((alert) => (
+                    <div key={alert.id} className="rounded-lg border border-slate-800 bg-slate-950/70 p-3">
+                      <p className="text-sm font-medium text-white">{alert.vehicleName}</p>
+                      <p className="text-sm text-slate-400">{alert.message}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         <PerformancePanel

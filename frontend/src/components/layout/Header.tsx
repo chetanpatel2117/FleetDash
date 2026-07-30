@@ -53,7 +53,7 @@ function Header() {
     <header className='flex h-16 items-center justify-between border-b border-slate-700 bg-slate-900 px-6'>
       {/* Left Section */}
       <div>
-        <h2 className='text-xl font-semibold text-white'>Fleet Command Center</h2>
+        <h2 className='text-xl font-semibold text-white'></h2>
       </div>
 
       {/* Right Section */}

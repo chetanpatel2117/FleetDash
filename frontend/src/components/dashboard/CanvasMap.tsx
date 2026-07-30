@@ -27,7 +27,8 @@ function CanvasMap({ vehicles }: CanvasMapProps) {
       socket.connect();
     }
 
-    const handleTelemetry = (nextVehicles: Vehicle[]) => {
+    const handleTelemetry = (payload: Vehicle | Vehicle[]) => {
+      const nextVehicles = Array.isArray(payload) ? payload : [payload];
       vehiclesRef.current = nextVehicles;
     };
 
