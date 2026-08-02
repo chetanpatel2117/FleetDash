@@ -8,25 +8,40 @@ function Header() {
   const { connected, dashboardSearch, setDashboardSearch } = useVehicleContext();
   const { logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const notificationMenuRef = useRef<HTMLDivElement | null>(null);
+  const profileButtonRef = useRef<HTMLButtonElement | null>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
       if (
         menuOpen &&
-        menuRef.current &&
-        buttonRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        !buttonRef.current.contains(event.target as Node)
+        profileMenuRef.current &&
+        profileButtonRef.current &&
+        !profileMenuRef.current.contains(target) &&
+        !profileButtonRef.current.contains(target)
       ) {
         setMenuOpen(false);
+      }
+
+      if (
+        notificationsOpen &&
+        notificationMenuRef.current &&
+        notificationButtonRef.current &&
+        !notificationMenuRef.current.contains(target) &&
+        !notificationButtonRef.current.contains(target)
+      ) {
+        setNotificationsOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [menuOpen]);
+  }, [menuOpen, notificationsOpen]);
 
   const handleLogout = () => {
     const confirmed = window.confirm("Are you sure you want to logout?");
@@ -53,7 +68,9 @@ function Header() {
     <header className='flex h-16 items-center justify-between border-b border-slate-700 bg-slate-900 px-6'>
       {/* Left Section */}
       <div>
-        <h2 className='text-xl font-semibold text-white'></h2>
+        <Link to='/' className='text-xl font-semibold text-white transition-colors hover:text-cyan-300'>
+          FleetDash
+        </Link>
       </div>
 
       {/* Right Section */}
@@ -81,14 +98,40 @@ function Header() {
         </div>
 
         {/* Notification */}
-        <button className='rounded-lg bg-slate-800 p-2 transition-colors hover:bg-slate-700'>
-          <Bell size={20} className='text-white' />
-        </button>
+        <div className='relative'>
+          <button
+            ref={notificationButtonRef}
+            onClick={() => setNotificationsOpen((open) => !open)}
+            className='rounded-lg bg-slate-800 p-2 transition-colors hover:bg-slate-700'
+          >
+            <Bell size={20} className='text-white' />
+          </button>
+
+          {notificationsOpen ? (
+            <div
+              ref={notificationMenuRef}
+              className='absolute right-0 mt-2 w-72 rounded-xl border border-slate-700 bg-slate-800 p-3 shadow-xl shadow-slate-950/40'
+            >
+              <div className='mb-3 flex items-center justify-between'>
+                <span className='text-sm font-semibold text-white'>Notifications</span>
+                <button
+                  onClick={() => setNotificationsOpen(false)}
+                  className='text-sm text-slate-400 transition-colors hover:text-white'
+                >
+                  Close
+                </button>
+              </div>
+              <div className='rounded-xl bg-slate-900 p-3 text-sm text-slate-300'>
+                No new notifications.
+              </div>
+            </div>
+          ) : null}
+        </div>
 
         {/* Profile */}
         <div className='relative'>
           <button
-            ref={buttonRef}
+            ref={profileButtonRef}
             onClick={() => setMenuOpen((open) => !open)}
             className='rounded-full bg-slate-800 p-2 transition-colors hover:bg-slate-700'
           >
@@ -97,7 +140,7 @@ function Header() {
 
           {menuOpen ? (
             <div
-              ref={menuRef}
+              ref={profileMenuRef}
               className='absolute right-0 mt-2 w-56 rounded-xl border border-slate-700 bg-slate-800 p-2 shadow-xl shadow-slate-950/40'
             >
               <Link
