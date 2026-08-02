@@ -51,6 +51,10 @@ npm run dev
 
 The frontend runs on `http://localhost:5173` by default.
 
+## Live demo
+
+- [FleetDash demo dashboard](https://fleet-dash-seven.vercel.app/)
+
 ## Running tests
 
 ### Backend
