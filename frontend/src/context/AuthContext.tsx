@@ -67,7 +67,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function login(username: string, password: string, remember = false) {
     try {
-      const API_BASE = import.meta.env.VITE_API_URL || window.location.origin;
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const useOriginFallback = import.meta.env.PROD && apiUrl?.includes("localhost");
+      const API_BASE = useOriginFallback ? window.location.origin : apiUrl || window.location.origin;
       const resp = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
