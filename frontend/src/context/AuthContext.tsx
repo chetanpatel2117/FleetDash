@@ -70,13 +70,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const apiUrl = import.meta.env.VITE_API_URL;
       const useOriginFallback = import.meta.env.PROD && apiUrl?.includes("localhost");
       const API_BASE = useOriginFallback ? window.location.origin : apiUrl || window.location.origin;
-      const resp = await fetch(`${API_BASE}/api/auth/login`, {
+      const requestUrl = `${API_BASE}/api/auth/login`;
+
+      console.debug("FleetDash login request URL:", requestUrl);
+
+      const resp = await fetch(requestUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       if (!resp.ok) {
+        console.warn("FleetDash login failed:", resp.status, resp.statusText, requestUrl);
         setToken(null);
         return false;
       }
