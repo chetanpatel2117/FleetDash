@@ -68,8 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function login(username: string, password: string, remember = false) {
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
-      const useOriginFallback = import.meta.env.PROD && apiUrl?.includes("localhost");
-      const API_BASE = useOriginFallback ? window.location.origin : apiUrl || window.location.origin;
+      const isLocalhostUrl = apiUrl?.includes("localhost") || apiUrl?.includes("127.0.0.1");
+      const API_BASE = import.meta.env.PROD && isLocalhostUrl ? "https://fleetdash-backend.onrender.com" : apiUrl || window.location.origin;
       const requestUrl = `${API_BASE}/api/auth/login`;
 
       console.debug("FleetDash login request URL:", requestUrl);
@@ -80,13 +80,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ username, password }),
       });
 
+      const data = await resp.json().catch(() => ({}));
+
       if (!resp.ok) {
-        console.warn("FleetDash login failed:", resp.status, resp.statusText, requestUrl);
+        console.warn("FleetDash login failed:", resp.status, resp.statusText, requestUrl, data);
         setToken(null);
         return false;
       }
-
-      const data = await resp.json();
 
       if (data && data.token) {
         const nextUser = {

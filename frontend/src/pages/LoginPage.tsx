@@ -31,7 +31,7 @@ function LoginPage() {
     setLoading(false);
 
     if (!ok) {
-      setError("Invalid credentials. Please try again.");
+      setError("Unable to sign in right now. Please verify the backend URL and credentials.");
     }
   };
 
