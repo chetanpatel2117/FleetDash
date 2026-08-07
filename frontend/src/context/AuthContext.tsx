@@ -67,10 +67,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function login(username: string, password: string, remember = false) {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
+      const apiUrl = import.meta.env.VITE_API_URL || "https://fleetdash-backend.onrender.com";
       const isLocalhostUrl = apiUrl?.includes("localhost") || apiUrl?.includes("127.0.0.1");
-      const API_BASE = import.meta.env.PROD && isLocalhostUrl ? "https://fleetdash-backend.onrender.com" : apiUrl || window.location.origin;
-      const requestUrl = `${API_BASE}/api/auth/login`;
+      const API_BASE = import.meta.env.PROD && isLocalhostUrl ? "https://fleetdash-backend.onrender.com" : apiUrl;
+      const requestUrl = `${API_BASE.replace(/\/$/, "")}/api/auth/login`;
 
       console.debug("FleetDash login request URL:", requestUrl);
 
