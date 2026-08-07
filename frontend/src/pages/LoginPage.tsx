@@ -26,12 +26,12 @@ function LoginPage() {
     setError(null);
     setLoading(true);
 
-    const ok = await login(username.trim(), password, remember);
+    const result = await login(username.trim(), password, remember);
 
     setLoading(false);
 
-    if (!ok) {
-      setError("Unable to sign in right now. Please verify the backend URL and credentials.");
+    if (!result.ok) {
+      setError(result.message || "Unable to sign in right now. Please verify the backend URL and credentials.");
     }
   };
 

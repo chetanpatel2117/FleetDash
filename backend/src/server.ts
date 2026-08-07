@@ -13,11 +13,14 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
+    try {
+      await connectDatabase();
 
-    await connectDatabase();
-
-    // Ensure an admin user exists (created from env ADMIN_USER/ADMIN_PASS)
-    await seedAdmin();
+      // Ensure an admin user exists (created from env ADMIN_USER/ADMIN_PASS)
+      await seedAdmin();
+    } catch (databaseError) {
+      console.warn("Database unavailable; continuing with fallback authentication.", databaseError);
+    }
 
     try {
       await connectPublisher();

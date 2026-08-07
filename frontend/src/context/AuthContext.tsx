@@ -9,7 +9,7 @@ interface AuthUser {
 interface AuthContextType {
   isAdmin: boolean;
   user: AuthUser | null;
-  login: (username: string, password: string, remember?: boolean) => Promise<boolean>;
+  login: (username: string, password: string, remember?: boolean) => Promise<{ ok: boolean; message?: string }>;
   logout: () => void;
 }
 
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!resp.ok) {
         console.warn("FleetDash login failed:", resp.status, resp.statusText, requestUrl, data);
         setToken(null);
-        return false;
+        return { ok: false, message: data?.message || "Unable to sign in right now." };
       }
 
       if (data && data.token) {
@@ -108,15 +108,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch {}
 
         navigate("/", { replace: true });
-        return true;
+        return { ok: true };
       }
 
       setToken(null);
-      return false;
+      return { ok: false, message: data?.message || "Unable to sign in right now." };
     } catch (error) {
       console.error("Login error:", error);
       setToken(null);
-      return false;
+      return { ok: false, message: "Unable to sign in right now. Please verify the backend URL and credentials." };
     }
   }
 
