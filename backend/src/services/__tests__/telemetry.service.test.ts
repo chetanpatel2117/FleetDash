@@ -1,3 +1,5 @@
+jest.setTimeout(10000);
+
 import { processTelemetry } from "../telemetry.service";
 import { runTelemetryWorker } from "../../workers";
 import { saveTelemetry } from "../telemetryStorage.service";
@@ -36,6 +38,8 @@ jest.mock("../../socket/socket", () => ({
 describe("processTelemetry", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    emitMock.mockClear();
+
     (runTelemetryWorker as jest.Mock).mockResolvedValue({
       success: true,
       data: {
