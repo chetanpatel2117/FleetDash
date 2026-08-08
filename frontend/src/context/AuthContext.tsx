@@ -67,9 +67,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function login(username: string, password: string, remember = false) {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "https://fleetdash-backend.onrender.com";
+      const apiUrl = import.meta.env.VITE_API_URL;
       const isLocalhostUrl = apiUrl?.includes("localhost") || apiUrl?.includes("127.0.0.1");
-      const API_BASE = import.meta.env.PROD && isLocalhostUrl ? "https://fleetdash-backend.onrender.com" : apiUrl;
+
+      if (import.meta.env.PROD && !apiUrl) {
+        const message = "VITE_API_URL is not configured for production. Set the backend URL in Vercel environment variables.";
+        console.error(message);
+        return { ok: false, message };
+      }
+
+      if (import.meta.env.PROD && isLocalhostUrl) {
+        const message = "VITE_API_URL is set to localhost in production. Update Vercel environment variables with the deployed backend URL.";
+        console.error(message, { apiUrl });
+        return { ok: false, message };
+      }
+
+      const API_BASE = apiUrl || window.location.origin;
       const requestUrl = `${API_BASE.replace(/\/$/, "")}/api/auth/login`;
 
       console.debug("FleetDash login request URL:", requestUrl);
@@ -85,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!resp.ok) {
         console.warn("FleetDash login failed:", resp.status, resp.statusText, requestUrl, data);
         setToken(null);
-        return { ok: false, message: data?.message || "Unable to sign in right now." };
+        return { ok: false, message: data?.message || `Login request failed with status ${resp.status} ${resp.statusText}.` };
       }
 
       if (data && data.token) {
